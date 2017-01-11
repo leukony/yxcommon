@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+        <groupId>com.yunxi.common</groupId>
+        <artifactId>yx-common</artifactId>
+        <version>1.0.0</version>
+    </parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.yunxi.common</groupId>
+	<artifactId>yx-common-monitor</artifactId>
+	<packaging>jar</packaging>
+	<name>yx-common-monitor</name>
+
+	<dependencies>
+		<dependency>
+		  	<groupId>com.yunxi.common</groupId>
+		  	<artifactId>yx-common-lang</artifactId>
+		</dependency>
+		<dependency>
+		  	<groupId>com.yunxi.common</groupId>
+		  	<artifactId>yx-common-tracer</artifactId>
+		</dependency>
+	</dependencies>
+</project>

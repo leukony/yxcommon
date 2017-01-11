@@ -1,0 +1,134 @@
+﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.yunxi.common</groupId>
+	<artifactId>yx-common</artifactId>
+	<version>1.0.0</version>
+	<packaging>pom</packaging>
+	<name>yx-common</name>
+
+	<modules>
+		<module>yx-common-bom</module>
+        <module>yx-common-lang</module>
+        <module>yx-common-monitor</module>
+        <module>yx-common-tracer</module>
+    </modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- ================================================= -->
+            <!-- YXCommon Dependency -->
+            <!-- ================================================= -->
+            <dependency>
+                <groupId>com.yunxi.common</groupId>
+                <artifactId>yx-common-lang</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yunxi.common</groupId>
+                <artifactId>yx-common-monitor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yunxi.common</groupId>
+                <artifactId>yx-common-tracer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ================================================= -->
+            <!-- 3rd lib -->
+            <!-- ================================================= -->
+			<dependency>
+			  	<groupId>commons-lang</groupId>
+			  	<artifactId>commons-lang</artifactId>
+			  	<version>2.4</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<defaultGoal>compile</defaultGoal>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+	
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.5</version>
+			    <configuration>
+                    <forkMode>once</forkMode> 
+                    <argLine>-Dfile.encoding=UTF-8</argLine> 
+                    <testFailureIgnore>true</testFailureIgnore>
+                    <argLine>-Xms1024M -Xmx1024M</argLine>
+                </configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<charset>UTF-8</charset>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+    			<artifactId>maven-jar-plugin</artifactId>
+    			<configuration>
+		        	<archive>
+		          		<addMavenDescriptor>false</addMavenDescriptor>
+		        	</archive>
+		      	</configuration>
+			</plugin>
+		</plugins>
+		
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+					<directory>src/test/java</directory>
+					<includes>
+						<include>**/*</include>
+					</includes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</testResource>
+		</testResources>		
+	</build>
+</project>
