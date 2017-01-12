@@ -16,39 +16,79 @@ public class HttpServiceContext extends TracerContext<HttpServiceContext> {
     private long   requestSize;
     /** 响应的大小 */
     private long   responseSize;
-
+    
+    /**
+      * Getter method for property <tt>url</tt>.
+      * 
+      * @return property value of url
+      */
     public String getUrl() {
         return url;
     }
 
+    /**
+      * Setter method for property <tt>url</tt>.
+      * 
+      * @param url value to be assigned to property url
+      */
     public void setUrl(String url) {
         this.url = url;
     }
 
+    /**
+      * Getter method for property <tt>method</tt>.
+      * 
+      * @return property value of method
+      */
     public String getMethod() {
         return method;
     }
 
+    /**
+      * Setter method for property <tt>method</tt>.
+      * 
+      * @param method value to be assigned to property method
+      */
     public void setMethod(String method) {
         this.method = method;
     }
 
+    /**
+      * Getter method for property <tt>requestSize</tt>.
+      * 
+      * @return property value of requestSize
+      */
     public long getRequestSize() {
         return requestSize;
     }
 
+    /**
+      * Setter method for property <tt>requestSize</tt>.
+      * 
+      * @param requestSize value to be assigned to property requestSize
+      */
     public void setRequestSize(long requestSize) {
         this.requestSize = requestSize;
     }
 
+    /**
+      * Getter method for property <tt>responseSize</tt>.
+      * 
+      * @return property value of responseSize
+      */
     public long getResponseSize() {
         return responseSize;
     }
 
+    /**
+      * Setter method for property <tt>responseSize</tt>.
+      * 
+      * @param responseSize value to be assigned to property responseSize
+      */
     public void setResponseSize(long responseSize) {
         this.responseSize = responseSize;
     }
-    
+
     /** 
      * @see com.yunxi.common.tracer.context.TracerContext#clone()
      */

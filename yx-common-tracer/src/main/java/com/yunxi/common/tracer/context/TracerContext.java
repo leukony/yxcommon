@@ -17,18 +17,6 @@ import org.apache.commons.lang.StringUtils;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class TracerContext<T extends TracerContext> {
 
-    public TracerContext() {
-    }
-
-    public TracerContext(Map<String, String> traceContext) {
-        putAllTrace(traceContext);
-    }
-
-    public TracerContext(String tracerId, String tracerIndex) {
-        setTraceId(tracerId);
-        setTraceIndex(tracerIndex);
-    }
-
     /**
      * 复制实例
      * @return 本实例的一个克隆
