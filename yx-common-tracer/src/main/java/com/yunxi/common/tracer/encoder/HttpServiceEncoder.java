@@ -2,9 +2,9 @@ package com.yunxi.common.tracer.encoder;
 
 import java.io.IOException;
 
+import com.yunxi.common.lang.util.DateUtils;
 import com.yunxi.common.tracer.appender.TracerAppender;
 import com.yunxi.common.tracer.context.HttpServiceContext;
-import com.yunxi.common.tracer.util.DateUtils;
 import com.yunxi.common.tracer.util.TracerBuilder;
 
 /**

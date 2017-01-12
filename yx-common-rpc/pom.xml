@@ -7,27 +7,14 @@
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.yunxi.common</groupId>
-	<artifactId>yx-common-monitor</artifactId>
+	<artifactId>yx-common-rpc</artifactId>
 	<packaging>jar</packaging>
-	<name>yx-common-monitor</name>
+	<name>yx-common-rpc</name>
 
 	<dependencies>
 		<dependency>
 		  	<groupId>com.yunxi.common</groupId>
-		  	<artifactId>yx-common-rpc</artifactId>
-		</dependency>
-		
-		<dependency>
-  			<groupId>org.springframework</groupId>
-  			<artifactId>spring-aop</artifactId>
-		</dependency>
-		<dependency>
-		  	<groupId>org.slf4j</groupId>
-		  	<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>com.alibaba</groupId>
-		    <artifactId>dubbo</artifactId>
+		  	<artifactId>yx-common-tracer</artifactId>
 		</dependency>
 	</dependencies>
 </project>

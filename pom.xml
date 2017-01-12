@@ -10,8 +10,9 @@
 	<modules>
 		<module>yx-common-bom</module>
         <module>yx-common-lang</module>
-        <module>yx-common-monitor</module>
         <module>yx-common-tracer</module>
+        <module>yx-common-rpc</module>
+        <module>yx-common-monitor</module>
     </modules>
 
 	<dependencyManagement>
@@ -26,22 +27,42 @@
             </dependency>
             <dependency>
                 <groupId>com.yunxi.common</groupId>
-                <artifactId>yx-common-monitor</artifactId>
+                <artifactId>yx-common-tracer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.yunxi.common</groupId>
-                <artifactId>yx-common-tracer</artifactId>
+                <artifactId>yx-common-rpc</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yunxi.common</groupId>
+                <artifactId>yx-common-monitor</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- ================================================= -->
             <!-- 3rd lib -->
             <!-- ================================================= -->
+            <dependency>
+	  			<groupId>org.springframework</groupId>
+	  			<artifactId>spring-aop</artifactId>
+	  			<version>4.1.9.RELEASE</version>
+			</dependency>
 			<dependency>
 			  	<groupId>commons-lang</groupId>
 			  	<artifactId>commons-lang</artifactId>
 			  	<version>2.4</version>
+			</dependency>
+			<dependency>
+			  	<groupId>org.slf4j</groupId>
+			  	<artifactId>slf4j-log4j12</artifactId>
+			  	<version>1.7.6</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.alibaba</groupId>
+			    <artifactId>dubbo</artifactId>
+			    <version>2.4.9</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
