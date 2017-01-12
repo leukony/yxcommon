@@ -1,8 +1,6 @@
 package com.yunxi.common.tracer.tracer;
 
 import java.io.File;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -15,9 +13,7 @@ import com.yunxi.common.tracer.util.TracerUtils;
  */
 public abstract class Tracer {
     
-    public static final String  TRACR_LOG_PATH; 
-    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    public static final int     DEFAULT_LOG_RESERVE_DAY = 7;
+    public static final String TRACR_LOG_PATH; 
     
     static {
         String appendPid = System.getProperty("traceAppendPid");

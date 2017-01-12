@@ -2,6 +2,7 @@ package com.yunxi.common.tracer.concurrent;
 
 import java.util.concurrent.Callable;
 
+import com.yunxi.common.tracer.TracerThreadLocal;
 import com.yunxi.common.tracer.context.TracerContext;
 import com.yunxi.common.tracer.util.TracerUtils;
 
@@ -12,14 +13,15 @@ import com.yunxi.common.tracer.util.TracerUtils;
  */
 public abstract class TracerCallable<T extends Object> implements Callable<T> {
     
+    @SuppressWarnings("rawtypes")
     private TracerContext tracerContext = TracerUtils.cloneContext();
 
     public T call() throws Exception {
-        TracerContext.set(tracerContext);
+        TracerThreadLocal.set(tracerContext);
         try {
             return doCall();
         } finally {
-            TracerContext.set(null);
+            TracerThreadLocal.set(null);
         }
     }
 

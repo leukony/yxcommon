@@ -1,5 +1,6 @@
 package com.yunxi.common.tracer.concurrent;
 
+import com.yunxi.common.tracer.TracerThreadLocal;
 import com.yunxi.common.tracer.context.TracerContext;
 import com.yunxi.common.tracer.util.TracerUtils;
 
@@ -10,14 +11,15 @@ import com.yunxi.common.tracer.util.TracerUtils;
  */
 public abstract class TracerRunnable implements Runnable {
 
+    @SuppressWarnings("rawtypes")
     private TracerContext tracerContext = TracerUtils.cloneContext();
 
     public void run() {
-        TracerContext.set(tracerContext);
+        TracerThreadLocal.set(tracerContext);
         try {
             doRun();
         } finally {
-            TracerContext.set(null);
+            TracerThreadLocal.set(null);
         }
     }
 

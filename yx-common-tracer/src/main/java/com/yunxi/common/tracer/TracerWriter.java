@@ -16,6 +16,7 @@ import com.yunxi.common.tracer.encoder.TracerEncoder;
  * 用来做异步的日志打印
  * <p>包含了一个日志队列，打印的日志回先放到这个队列中。</p>
  * <p>包含了一个异步线程，从队列中取出日志对象，并根据日志对象的类型找到对应的实际的Encoder和TracerAppender，做实际的日志打印动作。<p>
+ * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: TracerWriter.java, v 0.1 2017年1月11日 下午3:24:12 leukony Exp $
  */

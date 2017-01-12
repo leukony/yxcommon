@@ -8,9 +8,11 @@ import com.yunxi.common.tracer.context.TracerContext;
 /**
  * Tracer日志格式编码
  * <p>不允许多线程并发调用</p>
+ * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: TracerEncoder.java, v 0.1 2017年1月11日 下午3:42:56 leukony Exp $
  */
+@SuppressWarnings("rawtypes")
 public interface TracerEncoder<T extends TracerContext> {
     
     /**

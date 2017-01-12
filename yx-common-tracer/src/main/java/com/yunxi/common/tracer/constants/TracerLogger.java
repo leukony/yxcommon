@@ -1,7 +1,6 @@
 package com.yunxi.common.tracer.constants;
 
 import com.yunxi.common.tracer.appender.TimedRollingFileAppender;
-import com.yunxi.common.tracer.tracer.Tracer;
 
 /**
  * Tracer日志
@@ -13,11 +12,11 @@ public enum TracerLogger {
 
     HTTP_CLIENT_DIGEST("http_client_digest", "httpclient-digest.log",
                        TimedRollingFileAppender.HOURLY_ROLLING_PATTERN,
-                       Tracer.DEFAULT_LOG_RESERVE_DAY),
+                       TimedRollingFileAppender.DEFAULT_LOG_RESERVE_DAY),
 
     HTTP_SERVER_DIGEST("http_server_digest", "httpserver-digest.log",
                        TimedRollingFileAppender.HOURLY_ROLLING_PATTERN,
-                       Tracer.DEFAULT_LOG_RESERVE_DAY),
+                       TimedRollingFileAppender.DEFAULT_LOG_RESERVE_DAY),
 
     ;
 

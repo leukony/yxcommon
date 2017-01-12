@@ -9,6 +9,7 @@ import com.yunxi.common.tracer.appender.TracerAppender;
 
 /**
  * 主要用于清理日志
+ * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: TracerDelete.java, v 0.1 2017年1月11日 下午3:03:24 leukony Exp $
  */

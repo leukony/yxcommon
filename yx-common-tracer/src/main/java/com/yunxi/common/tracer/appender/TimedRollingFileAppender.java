@@ -15,10 +15,10 @@ import org.apache.commons.lang.StringUtils;
 
 import com.yunxi.common.lang.util.DateUtils;
 import com.yunxi.common.tracer.TracerDelete;
-import com.yunxi.common.tracer.tracer.Tracer;
 
 /**
  * 基于时间滚动的Tracer的日志打印
+ * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: TimedRollingFileAppender.java, v 0.1 2017年1月10日 下午3:08:41 leukony Exp $
  */
@@ -36,6 +36,7 @@ public class TimedRollingFileAppender extends RollingFileAppender {
     public static final String DAILY_ROLLING_PATTERN   = "'.'yyyy-MM-dd";
     public static final String HOURLY_ROLLING_PATTERN  = "'.'yyyy-MM-dd_HH";
     public static final String DEFAULT_ROLLING_PATTERN = DAILY_ROLLING_PATTERN;
+    public static final int    DEFAULT_LOG_RESERVE_DAY = 7;
     
     /** 日志的保留天数 */
     private int reserve;
@@ -68,7 +69,7 @@ public class TimedRollingFileAppender extends RollingFileAppender {
     }
 
     public TimedRollingFileAppender(String file, int bufferSize, String pattern) {
-        this(file, bufferSize, pattern, Tracer.DEFAULT_LOG_RESERVE_DAY);
+        this(file, bufferSize, pattern, DEFAULT_LOG_RESERVE_DAY);
     }
     
     public TimedRollingFileAppender(String file, String pattern, int reserve) {

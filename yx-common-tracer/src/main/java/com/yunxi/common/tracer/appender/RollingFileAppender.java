@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.yunxi.common.tracer.tracer.Tracer;
+import com.yunxi.common.tracer.constants.TracerConstants;
 
 /**
  * 基于滚动的Tracer的日志打印
@@ -120,7 +120,7 @@ public abstract class RollingFileAppender implements TracerAppender {
                 }
             }
 
-            buffer.write(log.getBytes(Tracer.DEFAULT_CHARSET));
+            buffer.write(log.getBytes(TracerConstants.DEFAULT_CHARSET));
         }
     }
 

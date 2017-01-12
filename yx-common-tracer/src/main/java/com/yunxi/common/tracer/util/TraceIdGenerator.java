@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * TraceId生成器
+ * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: TraceIdGenerator.java, v 0.1 2016年12月26日 下午4:52:45 leukony Exp $
  */

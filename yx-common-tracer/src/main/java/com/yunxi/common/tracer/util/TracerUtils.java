@@ -7,13 +7,16 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.yunxi.common.tracer.TracerThreadLocal;
 import com.yunxi.common.tracer.context.TracerContext;
 
 /**
  * Tracer工具类
+ * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: TracerUtils.java, v 0.1 2017年1月9日 下午2:40:13 leukony Exp $
  */
+@SuppressWarnings("rawtypes")
 public class TracerUtils {
     
     /**
@@ -21,7 +24,7 @@ public class TracerUtils {
      * @return
      */
     public static TracerContext cloneContext() {
-        TracerContext tracerContext = TracerContext.get();
+        TracerContext tracerContext = TracerThreadLocal.get();
         return tracerContext == null ? null : tracerContext.clone();
     }
 
