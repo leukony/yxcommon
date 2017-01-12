@@ -7,14 +7,6 @@
 	<packaging>pom</packaging>
 	<name>yx-common</name>
 
-	<modules>
-		<module>yx-common-bom</module>
-        <module>yx-common-lang</module>
-        <module>yx-common-tracer</module>
-        <module>yx-common-rpc</module>
-        <module>yx-common-monitor</module>
-    </modules>
-
 	<dependencyManagement>
 		<dependencies>
 			<!-- ================================================= -->
@@ -152,4 +144,12 @@
 			</testResource>
 		</testResources>		
 	</build>
+	
+	<modules>
+		<module>yx-common-bom</module>
+        <module>yx-common-lang</module>
+        <module>yx-common-tracer</module>
+        <module>yx-common-rpc</module>
+        <module>yx-common-monitor</module>
+    </modules>
 </project>

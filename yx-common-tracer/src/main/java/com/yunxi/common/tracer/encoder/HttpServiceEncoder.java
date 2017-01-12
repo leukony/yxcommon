@@ -23,7 +23,7 @@ public class HttpServiceEncoder implements TracerEncoder<HttpServiceContext> {
     public void encode(HttpServiceContext ctx, TracerAppender appender) throws IOException {
         tb.reset();
         
-        tb.append(DateUtils.format(ctx.getFinishTime(), DateUtils.DEFAULT_MILLS_FORMAT_PATTERN))
+        tb.append(DateUtils.format(ctx.getFinishTime(), DateUtils.MILLS_FORMAT_PATTERN))
           .append(ctx.getCurrentApp())
           .append(ctx.getTraceId())
           .append(ctx.getTraceIndex())
