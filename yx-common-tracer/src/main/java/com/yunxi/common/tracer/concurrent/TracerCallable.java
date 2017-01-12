@@ -2,7 +2,7 @@ package com.yunxi.common.tracer.concurrent;
 
 import java.util.concurrent.Callable;
 
-import com.yunxi.common.tracer.TracerThreadLocal;
+import com.yunxi.common.tracer.TracerThread;
 import com.yunxi.common.tracer.context.TracerContext;
 import com.yunxi.common.tracer.util.TracerUtils;
 
@@ -18,11 +18,11 @@ public abstract class TracerCallable<T extends Object> implements Callable<T> {
     private TracerContext tracerContext = TracerUtils.cloneContext();
 
     public T call() throws Exception {
-        TracerThreadLocal.set(tracerContext);
+        TracerThread.set(tracerContext);
         try {
             return doCall();
         } finally {
-            TracerThreadLocal.set(null);
+            TracerThread.set(null);
         }
     }
 

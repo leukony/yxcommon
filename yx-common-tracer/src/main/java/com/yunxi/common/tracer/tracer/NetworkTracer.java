@@ -1,6 +1,6 @@
 package com.yunxi.common.tracer.tracer;
 
-import com.yunxi.common.tracer.TracerThreadLocal;
+import com.yunxi.common.tracer.TracerThread;
 import com.yunxi.common.tracer.TracerWriter;
 import com.yunxi.common.tracer.context.TracerContext;
 
@@ -34,7 +34,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
         try {
             T child = null;
 
-            TracerContext ctx = TracerThreadLocal.get();
+            TracerContext ctx = TracerThread.get();
             if (ctx == null) {
                 child = getDefaultContext();
             } else {
@@ -44,7 +44,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
             child.setStartTime(System.currentTimeMillis());
             child.setThreadName(Thread.currentThread().getName());
 
-            TracerThreadLocal.set(child);
+            TracerThread.set(child);
 
             return child;
         } catch (Throwable t) {
@@ -64,7 +64,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
         try {
             createClientAppenderIfNecessary();
             
-            TracerContext ctx = TracerThreadLocal.get();
+            TracerContext ctx = TracerThread.get();
             if (ctx != null) {
                 ctx.setResultCode(resultCode);
                 ctx.setTracerType(clientTracerType);
@@ -73,7 +73,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
                 tracerWriter.append(ctx);
 
                 if (ctx.getClass().equals(expectedType)) {
-                    TracerThreadLocal.set(ctx.getParentContext());
+                    TracerThread.set(ctx.getParentContext());
                 }
             }
         } catch (Throwable t) {
@@ -89,10 +89,10 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
     @SuppressWarnings("unchecked")
     protected T startProcess() throws Throwable {
         try {
-            TracerContext ctx = TracerThreadLocal.get();
+            TracerContext ctx = TracerThread.get();
             if (ctx == null) {
                 ctx = getDefaultContext();
-                TracerThreadLocal.set(ctx);
+                TracerThread.set(ctx);
             }
 
             ctx.setStartTime(System.currentTimeMillis());
@@ -113,7 +113,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
         try {
             createServerAppenderIfNecessary();
             
-            TracerContext ctx = TracerThreadLocal.get();
+            TracerContext ctx = TracerThread.get();
             if (ctx != null) {
                 ctx.setResultCode(resultCode);
                 ctx.setTracerType(serverTracerType);
@@ -124,7 +124,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
         } catch (Throwable t) {
             // TODO Trace自身异常处理
         } finally {
-            TracerThreadLocal.clear();
+            TracerThread.clear();
         }
     }
 

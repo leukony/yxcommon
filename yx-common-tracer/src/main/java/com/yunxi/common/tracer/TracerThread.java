@@ -9,7 +9,7 @@ import com.yunxi.common.tracer.context.TracerContext;
  * @version $Id: TracerThreadLocal.java, v 0.1 2017年1月12日 下午1:24:18 leukony Exp $
  */
 @SuppressWarnings("rawtypes")
-public class TracerThreadLocal {
+public class TracerThread {
 
     private static ThreadLocal<TracerContext> THREADLOCAL = new ThreadLocal<TracerContext>();
 

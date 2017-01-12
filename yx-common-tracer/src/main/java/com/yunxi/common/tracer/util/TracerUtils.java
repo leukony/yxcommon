@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.yunxi.common.tracer.TracerThreadLocal;
+import com.yunxi.common.tracer.TracerThread;
 import com.yunxi.common.tracer.context.TracerContext;
 
 /**
@@ -24,7 +24,7 @@ public class TracerUtils {
      * @return
      */
     public static TracerContext cloneContext() {
-        TracerContext tracerContext = TracerThreadLocal.get();
+        TracerContext tracerContext = TracerThread.get();
         return tracerContext == null ? null : tracerContext.clone();
     }
 
