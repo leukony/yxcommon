@@ -25,6 +25,8 @@ public class DateUtils {
     public static final String   DATE_FORMAT_PATTERN_CHINESE = "yyyy年MM月dd日";
     public static final String   TIME_FORMAT_PATTERN_CHINESE = "yyyy年MM月dd日 HH时mm分ss秒";
 
+    public static final long     ONE_DAY_MILSEC              = 24 * 60 * 60 * 1000;
+
     public static final TimeZone DEFAULT_TIMEZONE            = TimeZone.getTimeZone("GMT");
 
     /**
@@ -159,15 +161,15 @@ public class DateUtils {
 
     /**
      * 时间偏移
-     * @param date
+     * @param source
      * @param field
-     * @param amount
+     * @param num
      * @return
      */
-    public static Date addDate(Date date, int field, int amount) {
+    public static Date addDate(Date source, int field, int num) {
         Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.add(field, amount);
+        c.setTime(source);
+        c.add(field, num);
         return c.getTime();
     }
 
@@ -178,7 +180,7 @@ public class DateUtils {
      */
     public static int diffDays(Date first, Date last) {
         long diffMills = last.getTime() - first.getTime();
-        long diffDays = diffMills / (24 * 60 * 60 * 1000);
+        long diffDays = diffMills / ONE_DAY_MILSEC;
         return new Long(diffDays).intValue();
     }
 
@@ -189,12 +191,12 @@ public class DateUtils {
      */
     public static int diffMonths(Date first, Date last) {
         int monthCount = 0;
-        Calendar before = Calendar.getInstance();
-        before.setTime(first);
-        Calendar after = Calendar.getInstance();
-        after.setTime(last);
-        monthCount = (after.get(Calendar.YEAR) - before.get(Calendar.YEAR)) * 12
-                     + after.get(Calendar.MONTH) - before.get(Calendar.MONTH);
+        Calendar cBefore = Calendar.getInstance();
+        cBefore.setTime(first);
+        Calendar cAfter = Calendar.getInstance();
+        cAfter.setTime(last);
+        monthCount = (cAfter.get(Calendar.YEAR) - cBefore.get(Calendar.YEAR)) * 12
+                     + cAfter.get(Calendar.MONTH) - cBefore.get(Calendar.MONTH);
         return monthCount;
     }
 
@@ -205,11 +207,11 @@ public class DateUtils {
      */
     public static int diffYears(Date first, Date last) {
         int yearCount = 0;
-        Calendar before = Calendar.getInstance();
-        before.setTime(first);
-        Calendar after = Calendar.getInstance();
-        after.setTime(last);
-        yearCount = after.get(Calendar.YEAR) - before.get(Calendar.YEAR);
+        Calendar cBefore = Calendar.getInstance();
+        cBefore.setTime(first);
+        Calendar cAfter = Calendar.getInstance();
+        cAfter.setTime(last);
+        yearCount = cAfter.get(Calendar.YEAR) - cBefore.get(Calendar.YEAR);
         return yearCount;
     }
 
@@ -219,12 +221,13 @@ public class DateUtils {
      * @return
      */
     public static Date getFirstDayOfMonth(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        return calendar.getTime();
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return c.getTime();
     }
 
     /**
@@ -233,12 +236,13 @@ public class DateUtils {
      * @return
      */
     public static Date getLastDayOfMonth(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        return calendar.getTime();
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.DATE, c.getActualMaximum(Calendar.DATE));
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return c.getTime();
     }
 
     /**
