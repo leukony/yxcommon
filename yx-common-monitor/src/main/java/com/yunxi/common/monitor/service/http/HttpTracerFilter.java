@@ -1,0 +1,143 @@
+package com.yunxi.common.monitor.service.http;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.yunxi.common.tracer.TracerFactory;
+import com.yunxi.common.tracer.constants.TracerConstants;
+import com.yunxi.common.tracer.context.HttpServiceContext;
+import com.yunxi.common.tracer.tracer.HttpServiceTracer;
+
+/**
+ * Http Server Tracer Filter
+ * 
+ * @author <a href="mailto:leukony@yeah.net">leukony</a>
+ * @version $Id: HttpTracerFilter.java, v 0.1 2017年1月12日 下午5:11:21 leukony Exp $
+ */
+public class HttpTracerFilter implements Filter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpTracerFilter.class);
+    
+    /** 应用名 */
+    private String appName;
+
+    /** 
+     * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     */
+    @Override
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
+                         FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        // 1、获取WEB请求中的Tracer参数
+        String tracerId = request.getHeader(TracerConstants.TRACE_ID);
+        String tracerIndex = request.getHeader(TracerConstants.TRACE_INDEX);
+        // 兼容不同平台存放Tracer参数的方式不一样
+        if (StringUtils.isBlank(tracerId)) {
+            tracerId = request.getParameter(TracerConstants.TRACE_ID);
+        }
+        if (StringUtils.isBlank(tracerIndex)) {
+            tracerIndex = request.getParameter(TracerConstants.TRACE_INDEX);
+        }
+
+        Map<String, String> tracerContext = null;
+        if (StringUtils.isNotBlank(tracerId) && StringUtils.isNotBlank(tracerIndex)) {
+            tracerContext = new HashMap<String, String>();
+            tracerContext.put(TracerConstants.TRACE_ID, tracerId);
+            tracerContext.put(TracerConstants.TRACE_INDEX, tracerIndex);
+        }
+
+        // 2、从工厂中获取HttpServerTracer
+        HttpServiceTracer httpServiceTracer = TracerFactory.getHttpServerTracer();
+
+        // 3、将请求中的Tracer参数设置到上下文中
+        httpServiceTracer.setContext(tracerContext);
+
+        // 4. 开始处理WEB请求，调用startProcess
+        HttpServiceContext httpServiceContext = httpServiceTracer.startProcess();
+
+        // 5. 获取WEB请求参数并设置到Tracer上下文中
+        HttpServletRequest httpReq = request;
+        httpServiceContext.setUrl(httpReq.getRequestURL().toString());
+        httpServiceContext.setRequestSize(httpReq.getContentLength());
+        httpServiceContext.setMethod(httpReq.getMethod());
+        httpServiceContext.setCurrentApp(appName);
+
+        EnhanceResponseWrapper wrapper = new EnhanceResponseWrapper(response);
+
+        try {
+            chain.doFilter(request, wrapper);
+
+            httpServiceContext.setResponseSize(wrapper.length);
+
+            httpServiceTracer.finishProcess(String.valueOf(wrapper.status));
+        } finally {
+            if (httpServiceTracer != null) {
+                try {
+                    httpServiceTracer.clear();
+                } catch (Throwable e) {
+                    LOGGER.warn("清理WEB请求Tracer日志上下文异常", e);
+                }
+            }
+        }
+    }
+
+    /** 
+     * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
+     */
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        appName = filterConfig.getInitParameter("appName");
+    }
+
+    /** 
+     * @see javax.servlet.Filter#destroy()
+     */
+    @Override
+    public void destroy() {
+    }
+
+    class EnhanceResponseWrapper extends HttpServletResponseWrapper {
+
+        int length = 0;
+        int status = 200;
+
+        public EnhanceResponseWrapper(HttpServletResponse response) {
+            super(response);
+        }
+
+        /**
+         * @see javax.servlet.http.HttpServletResponseWrapper#setStatus(int)
+         */
+        @Override
+        public void setStatus(int status) {
+            this.status = status;
+            super.setStatus(status);
+        }
+
+        /**
+         * @see javax.servlet.ServletResponseWrapper#setContentLength(int)
+         */
+        @Override
+        public void setContentLength(int contentLength) {
+            this.length = contentLength;
+            super.setContentLength(contentLength);
+        }
+    }
+}

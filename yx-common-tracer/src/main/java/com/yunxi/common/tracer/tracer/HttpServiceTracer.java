@@ -1,5 +1,8 @@
 package com.yunxi.common.tracer.tracer;
 
+import java.util.Map;
+
+import com.yunxi.common.tracer.TracerThread;
 import com.yunxi.common.tracer.appender.TimedRollingFileAppender;
 import com.yunxi.common.tracer.appender.TracerAppender;
 import com.yunxi.common.tracer.constants.TracerConstants;
@@ -36,7 +39,7 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
         httpServiceContext.setTraceIndex(TracerConstants.TRACE_INDEX_ROOT);
         return httpServiceContext;
     }
-
+    
     /** 
      * @see com.yunxi.common.tracer.tracer.NetworkTracer#createChildContext(com.yunxi.common.tracer.context.TracerContext)
      */
@@ -46,6 +49,20 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
         HttpServiceContext httpServiceContext = new HttpServiceContext();
         cloneTraceContext(parentCtx, httpServiceContext);
         return httpServiceContext;
+    }
+
+    /** 
+     * @see com.yunxi.common.tracer.tracer.NetworkTracer#setContext(java.util.Map)
+     */
+    @Override
+    public HttpServiceContext setContext(Map<String, String> traceContext) {
+        if (traceContext != null) {
+            HttpServiceContext httpServiceContext = new HttpServiceContext();
+            httpServiceContext.putAllTrace(traceContext);
+            TracerThread.set(httpServiceContext);
+            return httpServiceContext;
+        }
+        return null;
     }
 
     /** 

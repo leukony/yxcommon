@@ -1,5 +1,7 @@
 package com.yunxi.common.tracer.tracer;
 
+import java.util.Map;
+
 import com.yunxi.common.tracer.TracerThread;
 import com.yunxi.common.tracer.TracerWriter;
 import com.yunxi.common.tracer.context.TracerContext;
@@ -30,7 +32,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      * @return
      * @throws Throwable
      */
-    protected T startInvoke() throws Throwable {
+    public T startInvoke() {
         try {
             T child = null;
 
@@ -59,8 +61,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      * @param expectedType
      * @throws Throwable
      */
-    protected void finishInvoke(String resultCode, Class<? extends TracerContext> expectedType)
-                                                                                               throws Throwable {
+    public void finishInvoke(String resultCode, Class<? extends TracerContext> expectedType) {
         try {
             createClientAppenderIfNecessary();
             
@@ -87,7 +88,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      * @throws Throwable
      */
     @SuppressWarnings("unchecked")
-    protected T startProcess() throws Throwable {
+    public T startProcess() {
         try {
             TracerContext ctx = TracerThread.get();
             if (ctx == null) {
@@ -109,7 +110,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      * 网络调用处理完毕
      * @param resultCode
      */
-    protected void finishProcess(String resultCode) {
+    public void finishProcess(String resultCode) {
         try {
             createServerAppenderIfNecessary();
             
@@ -127,6 +128,13 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
             TracerThread.clear();
         }
     }
+    
+    /**
+     * 清理日志上下文
+     */
+    public void clear() {
+        TracerThread.clear();
+    }
 
     /**
      * 复制透传属性
@@ -143,9 +151,10 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
         // TODO
         child.setParentContext(null);
     }
+    
 
     /**
-     * 创建默认的 Tracer日志上下文
+     * 创建默认的 Tracer日志上下文    
      * @return Tracer日志上下文
      */
     protected abstract T getDefaultContext();
@@ -156,6 +165,13 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      * @return 根据父Tracer日志上下文创建子Tracer日志上下文
      */
     protected abstract T createChildContext(TracerContext parentCtx);
+    
+    /**
+     * 根据Map创建 TracerContext，并且设置到 ThreadLocal中去
+     * @param tracerContext
+     * @return
+     */
+    protected abstract T setContext(Map<String, String> tracerContext);
     
     /**
      * 创建网络调用的Appender
