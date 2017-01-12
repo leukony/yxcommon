@@ -1,17 +1,25 @@
 package com.yunxi.common.tracer.tracer;
 
+import com.yunxi.common.tracer.TracerThreadLocal;
 import com.yunxi.common.tracer.TracerWriter;
 import com.yunxi.common.tracer.context.TracerContext;
 
 /**
  * 基于网络调用的Tracer的基类
  * <p>如：远程调用、远端缓存、消息、DB等</p>
+ * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: NetworkTracer.java, v 0.1 2017年1月9日 下午2:55:17 leukony Exp $
  */
+@SuppressWarnings("rawtypes")
 public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
-    
-    /** 异步日志打印，所有的中间件公用一个 AsyncAppender 来打印日志 */
+
+    /** 客户端Tracer日志类型 */
+    protected char                clientTracerType;
+    /** 服务端Tracer日志类型 */
+    protected char                serverTracerType;
+
+    /** 异步日志打印，所有的中间件公用一个 TracerWriter来打印日志 */
     protected static TracerWriter tracerWriter = new TracerWriter(1024);
     static {
         tracerWriter.start("NetworkAppender");
@@ -24,21 +32,21 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      */
     protected T startInvoke() throws Throwable {
         try {
-            T childCtx = null;
+            T child = null;
 
-            TracerContext ctx = TracerContext.get();
+            TracerContext ctx = TracerThreadLocal.get();
             if (ctx == null) {
-                childCtx = getDefaultContext();
+                child = getDefaultContext();
             } else {
-                childCtx = createChildContext(ctx);
+                child = createChildContext(ctx);
             }
 
-            TracerContext.set(childCtx);
+            child.setStartTime(System.currentTimeMillis());
+            child.setThreadName(Thread.currentThread().getName());
 
-            childCtx.setStartTime(System.currentTimeMillis());
-            childCtx.setThreadName(Thread.currentThread().getName());
+            TracerThreadLocal.set(child);
 
-            return childCtx;
+            return child;
         } catch (Throwable t) {
             // TODO Trace自身异常处理
             return null;
@@ -53,16 +61,23 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      */
     protected void finishInvoke(String resultCode, Class<? extends TracerContext> expectedType)
                                                                                                throws Throwable {
-        TracerContext ctx = TracerContext.get();
-        if (ctx != null) {
-            ctx.setResultCode(resultCode);
-            ctx.setFinishTime(System.currentTimeMillis());
+        try {
+            createClientAppenderIfNecessary();
             
-            // TODO 统计日志
-            
-            if (ctx.getClass().equals(expectedType)) {
-                TracerContext.set(ctx.getParentContext());
+            TracerContext ctx = TracerThreadLocal.get();
+            if (ctx != null) {
+                ctx.setResultCode(resultCode);
+                ctx.setTracerType(clientTracerType);
+                ctx.setFinishTime(System.currentTimeMillis());
+
+                tracerWriter.append(ctx);
+
+                if (ctx.getClass().equals(expectedType)) {
+                    TracerThreadLocal.set(ctx.getParentContext());
+                }
             }
+        } catch (Throwable t) {
+            // TODO Trace自身异常处理
         }
     }
 
@@ -71,17 +86,23 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      * @return
      * @throws Throwable
      */
+    @SuppressWarnings("unchecked")
     protected T startProcess() throws Throwable {
-        TracerContext ctx = TracerContext.get();
-        if (ctx == null) {
-            ctx = getDefaultContext();
-            TracerContext.set(ctx);
+        try {
+            TracerContext ctx = TracerThreadLocal.get();
+            if (ctx == null) {
+                ctx = getDefaultContext();
+                TracerThreadLocal.set(ctx);
+            }
+
+            ctx.setStartTime(System.currentTimeMillis());
+            ctx.setThreadName(Thread.currentThread().getName());
+
+            return (T) ctx;
+        } catch (Throwable t) {
+            // TODO Trace自身异常处理
+            return null;
         }
-
-        ctx.setStartTime(System.currentTimeMillis());
-        ctx.setThreadName(Thread.currentThread().getName());
-
-        return (T) ctx;
     }
 
     /**
@@ -90,38 +111,37 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      */
     protected void finishProcess(String resultCode) {
         try {
-            TracerContext ctx = TracerContext.get();
+            createServerAppenderIfNecessary();
+            
+            TracerContext ctx = TracerThreadLocal.get();
             if (ctx != null) {
                 ctx.setResultCode(resultCode);
+                ctx.setTracerType(serverTracerType);
                 ctx.setFinishTime(System.currentTimeMillis());
 
-                // TODO 追加日志
-                // TODO 统计日志
+                tracerWriter.append(ctx);
             }
         } catch (Throwable t) {
             // TODO Trace自身异常处理
         } finally {
-            clear();
+            TracerThreadLocal.clear();
         }
     }
 
     /**
-     * 清理Tracer日志上下文
+     * 复制透传属性
+     * @param parent
+     * @param child
      */
-    public void clear() {
-        TracerContext.set(null);
-    }
-    
-    /**
-     * 复制父Tracer日志上下文的透传属性给子Tracer中
-     * @param parentContext
-     * @param childContext
-     */
-    public void cloneTraceAttr(TracerContext parentContext, T childContext) {
+    public void cloneTraceContext(TracerContext parent, T child) {
         // 公共属性
-        childContext.setTraceId(parentContext.getTraceId());
+        child.setTraceId(parent.getTraceId());
+        child.setTraceIndex(parent.nextChildTraceIndex());
         // 系统属性
         // 业务属性
+
+        // TODO
+        child.setParentContext(null);
     }
 
     /**
@@ -129,11 +149,21 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      * @return Tracer日志上下文
      */
     protected abstract T getDefaultContext();
-    
+
     /**
      * 创建子Tracer日志上下文
      * @param parentCtx 父Tracer日志上下文
      * @return 根据父Tracer日志上下文创建子Tracer日志上下文
      */
     protected abstract T createChildContext(TracerContext parentCtx);
+    
+    /**
+     * 创建网络调用的Appender
+     */
+    protected abstract void createClientAppenderIfNecessary();
+    
+    /**
+     * 创建处理网络调用的Appender 
+     */
+    protected abstract void createServerAppenderIfNecessary();
 }

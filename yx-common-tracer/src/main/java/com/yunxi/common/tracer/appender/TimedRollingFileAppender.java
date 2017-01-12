@@ -70,6 +70,10 @@ public class TimedRollingFileAppender extends RollingFileAppender {
     public TimedRollingFileAppender(String file, int bufferSize, String pattern) {
         this(file, bufferSize, pattern, Tracer.DEFAULT_LOG_RESERVE_DAY);
     }
+    
+    public TimedRollingFileAppender(String file, String pattern, int reserve) {
+        this(file, DEFAULT_BUFFER, pattern, reserve);
+    }
 
     public TimedRollingFileAppender(String file, int bufferSize, String pattern, int reserve) {
         super(file, bufferSize);

@@ -1,6 +1,6 @@
 package com.yunxi.common.tracer.util;
 
-import static com.yunxi.common.tracer.TracerConstants.*;
+import static com.yunxi.common.tracer.constants.TracerConstants.*;
 
 import java.lang.management.ManagementFactory;
 import java.util.Map;

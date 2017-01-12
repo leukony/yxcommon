@@ -1,9 +1,9 @@
 package com.yunxi.common.tracer.util;
 
-import static com.yunxi.common.tracer.TracerConstants.DEFAULT_BUFFER_SIZE;
-import static com.yunxi.common.tracer.TracerConstants.DEFAULT_SEPARATOR;
-import static com.yunxi.common.tracer.TracerConstants.DEFAULT_SEPARATOR_ESCAPE;
-import static com.yunxi.common.tracer.TracerConstants.NEWLINE;
+import static com.yunxi.common.tracer.constants.TracerConstants.DEFAULT_BUFFER_SIZE;
+import static com.yunxi.common.tracer.constants.TracerConstants.DEFAULT_SEPARATOR;
+import static com.yunxi.common.tracer.constants.TracerConstants.DEFAULT_SEPARATOR_ESCAPE;
+import static com.yunxi.common.tracer.constants.TracerConstants.NEWLINE;
 
 import java.util.Map;
 

@@ -3,9 +3,9 @@ package com.yunxi.common.tracer.context;
 /**
  * Http服务日志上下文
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
- * @version $Id: HttpContext.java, v 0.1 2017年1月9日 下午3:32:03 leukony Exp $
+ * @version $Id: HttpServiceContext.java, v 0.1 2017年1月9日 下午3:32:03 leukony Exp $
  */
-public class HttpServiceContext extends TracerContext {
+public class HttpServiceContext extends TracerContext<HttpServiceContext> {
 
     /** 请求的Url */
     private String url;
@@ -52,7 +52,7 @@ public class HttpServiceContext extends TracerContext {
      * @see com.yunxi.common.tracer.context.TracerContext#clone()
      */
     @Override
-    public TracerContext clone() {
+    public HttpServiceContext clone() {
         HttpServiceContext httpServiceContext = new HttpServiceContext();
         httpServiceContext.url = this.url;
         httpServiceContext.method = this.method;
