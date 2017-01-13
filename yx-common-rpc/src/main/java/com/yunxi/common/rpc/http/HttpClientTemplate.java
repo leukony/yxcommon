@@ -11,12 +11,12 @@ import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
-import org.apache.commons.lang.StringUtils;
 
 import com.yunxi.common.tracer.TracerFactory;
 import com.yunxi.common.tracer.constants.TracerConstants;
@@ -40,21 +40,9 @@ import com.yunxi.common.tracer.tracer.HttpServiceTracer;
  */
 public class HttpClientTemplate {
 
-    private HttpClient httpClient;
-    
-    public void initialize() {
-        HttpConnectionManagerParams httpClientParam = new HttpConnectionManagerParams();
-        httpClientParam.setDefaultMaxConnectionsPerHost(maxConnPerHost);
-        httpClientParam.setConnectionTimeout(connectionTimeout);
-        httpClientParam.setMaxTotalConnections(maxTotalConn);
-        httpClientParam.setSoTimeout(soTimeout);
-        
-        HttpConnectionManager httpClientManager = new MultiThreadedHttpConnectionManager();
-        httpClientManager.setParams(httpClientParam);
-        
-        httpClient = new HttpClient(httpClientManager);
-        httpClient.getParams().setConnectionManagerTimeout(connectionManagerTimeout);
-    }
+    private String           appName;
+    private HttpClient       httpClient;
+    private HttpClientParams httpClientParams;
 
     /**
      * 以Get方式执行http请求
@@ -74,7 +62,8 @@ public class HttpClientTemplate {
      * @throws IOException
      * @throws HttpException
      */
-    public String executeGet(final String url, final HttpState state) throws IOException, HttpException {
+    public String executeGet(final String url, final HttpState state) throws IOException,
+                                                                     HttpException {
         return executeWithState(new GetMethod(url), state);
     }
 
@@ -87,7 +76,8 @@ public class HttpClientTemplate {
      * @throws IOException
      * @throws HttpException
      */
-    public String executePost(final String url, final NameValuePair[] params, final NameValuePair[] headerParams) throws IOException, HttpException {
+    public String executePost(final String url, final NameValuePair[] params,
+                              final NameValuePair[] headerParams) throws IOException, HttpException {
         return executePost(url, params, headerParams, null);
     }
 
@@ -100,7 +90,10 @@ public class HttpClientTemplate {
      * @throws IOException
      * @throws HttpException
      */
-    public String executePost(final String url, final NameValuePair[] params, final NameValuePair[] headerParams, final HttpState httpState) throws IOException, HttpException {
+    public String executePost(final String url, final NameValuePair[] params,
+                              final NameValuePair[] headerParams, final HttpState httpState)
+                                                                                            throws IOException,
+                                                                                            HttpException {
         PostMethod postMethod = new PostMethod(url);
         for (int i = 0; null != headerParams && i < headerParams.length; i++) {
             NameValuePair nameValuePair = headerParams[i];
@@ -129,14 +122,16 @@ public class HttpClientTemplate {
      * @throws IOException
      * @throws HttpException
      */
-    public String executeWithState(final HttpMethod httpMethod, final HttpState state) throws IOException, HttpException {
+    public String executeWithState(final HttpMethod httpMethod, final HttpState state)
+                                                                                      throws IOException,
+                                                                                      HttpException {
         HttpClientResponse resp = execute(httpMethod, state, new HttpClientCallback<String>() {
             public String process(HttpMethod method) throws IOException {
                 return method.getResponseBodyAsString();
             }
         });
 
-        return (String) resp.getResponseBody();
+        return (String) resp.getBody();
     }
 
     /**
@@ -147,7 +142,10 @@ public class HttpClientTemplate {
      * @throws IOException
      * @throws HttpException
      */
-    public HttpClientResponse execute(final HttpMethod httpMethod, final HttpClientCallback<?> httpClientCallback) throws IOException, HttpException {
+    public HttpClientResponse execute(final HttpMethod httpMethod,
+                                      final HttpClientCallback<?> httpClientCallback)
+                                                                                     throws IOException,
+                                                                                     HttpException {
         return execute(httpMethod, null, httpClientCallback);
     }
 
@@ -160,100 +158,114 @@ public class HttpClientTemplate {
      * @throws IOException
      * @throws HttpException
      */
-    public HttpClientResponse execute(final HttpMethod httpMethod, final HttpState httpState, final HttpClientCallback<?> httpClientCallback) throws IOException, HttpException {
-        String responseString = "";
+    public HttpClientResponse execute(final HttpMethod httpMethod, final HttpState httpState,
+                                      final HttpClientCallback<?> httpClientCallback)
+                                                                                     throws IOException,
+                                                                                     HttpException {
+        String resultCode = "";
         HttpServiceTracer httpServiceTracer = TracerFactory.getHttpClientTracer();
-
+        HttpServiceContext httpServiceContext = httpServiceTracer.startInvoke();
         try {
-            HttpServiceContext httpServiceContext = httpServiceTracer.startInvoke();
             if (httpServiceContext != null) {
-                URI uri = httpMethod.getURI();
-                StringBuilder sb = new StringBuilder();
-                int port = uri.getPort();
-                String portString = "";
+                httpMethod.setRequestHeader(TracerConstants.TRACE_ID,
+                    httpServiceContext.getTraceId());
+                httpMethod.setRequestHeader(TracerConstants.TRACE_INDEX,
+                    httpServiceContext.getTraceIndex());
 
-                if (port != -1) {
-                    portString = ":" + port;
-                }
-                
-                sb.append(uri.getScheme()).append("://").append(uri.getHost()).append(portString).append(uri.getPath());
-                
-                httpServiceContext.setUrl(sb.toString());
+                httpServiceContext.setCurrentApp(appName);
                 httpServiceContext.setMethod(httpMethod.getName());
+                httpServiceContext.setUrl(getHttpClientUrl(httpMethod));
+
                 if (httpMethod instanceof EntityEnclosingMethod) {
-                    RequestEntity requestEntity = ((EntityEnclosingMethod) httpMethod).getRequestEntity();
+                    RequestEntity requestEntity = ((EntityEnclosingMethod) httpMethod)
+                        .getRequestEntity();
                     if (requestEntity != null) {
                         httpServiceContext.setRequestSize(requestEntity.getContentLength());
                     }
                 }
-                httpServiceContext.setCurrentApp(currentApp);
-
-                String traceId = httpServiceContext.getTraceId();
-                String traceIndex = httpServiceContext.getTraceIndex();
-                if (StringUtils.isNotBlank(traceId) && StringUtils.isNotBlank(traceIndex)) {
-                    httpMethod.setRequestHeader(TracerConstants.TRACE_ID, traceId);
-                    httpMethod.setRequestHeader(TracerConstants.TRACE_INDEX, traceIndex);
-                }
             }
-            
-            int responseCode = this.httpClient.executeMethod(null, httpMethod, httpState);
-            
-            HttpClientResponse response = new HttpClientResponse();
-            response.setResponseCode(responseCode);
+
+            int responseCode = httpClient.executeMethod(null, httpMethod, httpState);
 
             if (httpServiceContext != null) {
                 if (httpMethod instanceof HttpMethodBase) {
-                    httpServiceContext.setResponseSize(((HttpMethodBase) httpMethod).getResponseContentLength());
+                    httpServiceContext.setResponseSize(((HttpMethodBase) httpMethod)
+                        .getResponseContentLength());
                 }
-                responseString = String.valueOf(responseCode);
-
+                resultCode = String.valueOf(responseCode);
             }
-            response.setResponseBody(httpClientCallback.process(httpMethod));
+
+            HttpClientResponse response = new HttpClientResponse();
+            response.setCode(responseCode);
+            response.setBody(httpClientCallback.process(httpMethod));
             return response;
         } finally {
-            if (httpServiceTracer.getLogContext() != null) {
-                httpServiceTracer.finishInvoke(String.valueOf(responseString), HttpServiceContext.class);
-            }
+            httpServiceTracer.finishInvoke(resultCode, HttpServiceContext.class);
             httpMethod.releaseConnection();
         }
     }
-    
-    /** 当前应用名 */
-    private String     currentApp;
-    private int        maxConnPerHost           = 6;
 
-    private int        maxTotalConn             = 10;
+    /**
+     * 获取请求的URL
+     * @param httpMethod
+     * @return
+     * @throws URIException
+     */
+    private String getHttpClientUrl(HttpMethod httpMethod) throws URIException {
+        URI uri = httpMethod.getURI();
 
-    /** 默认等待连接建立超时，单位:毫秒*/
-    private int        connectionTimeout        = 1000;
+        StringBuilder sb = new StringBuilder();
+        sb.append(uri.getScheme());
+        sb.append("://");
+        sb.append(uri.getHost());
+        sb.append(uri.getPort() != -1 ? ":" + uri.getPort() : "");
+        sb.append(uri.getPath());
 
-    /** 默认等待数据返回超时，单位:毫秒*/
-    private int        soTimeout                = 10000;
-
-    /** 默认请求连接池连接超时,单位:毫秒*/
-    private int        connectionManagerTimeout = 1000;
-    
-    public void setMaxConnPerHost(int maxConnPerHost) {
-        this.maxConnPerHost = maxConnPerHost;
+        return sb.toString();
     }
 
-    public void setMaxTotalConn(int maxTotalConn) {
-        this.maxTotalConn = maxTotalConn;
+    /**
+     * 初始化
+     */
+    public void initialize() {
+        HttpConnectionManagerParams httpClientParam = new HttpConnectionManagerParams();
+        httpClientParam.setDefaultMaxConnectionsPerHost(httpClientParams.getMaxConnPerHost());
+        httpClientParam.setConnectionTimeout(httpClientParams.getConnectionTimeout());
+        httpClientParam.setMaxTotalConnections(httpClientParams.getMaxTotalConn());
+        httpClientParam.setSoTimeout(httpClientParams.getSoTimeout());
+
+        HttpConnectionManager httpClientManager = new MultiThreadedHttpConnectionManager();
+        httpClientManager.setParams(httpClientParam);
+
+        httpClient = new HttpClient(httpClientManager);
+        httpClient.getParams().setConnectionManagerTimeout(
+            httpClientParams.getConnectionManagerTimeout());
     }
 
-    public void setConnectionTimeout(int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    public void setSoTimeout(int soTimeout) {
-        this.soTimeout = soTimeout;
-    }
-
-    public void setConnectionManagerTimeout(int connectionManagerTimeout) {
-        this.connectionManagerTimeout = connectionManagerTimeout;
-    }
-
+    /**
+      * Setter method for property <tt>appName</tt>.
+      * 
+      * @param appName value to be assigned to property appName
+      */
     public void setAppName(String appName) {
-        this.currentApp = appName;
+        this.appName = appName;
+    }
+
+    /**
+      * Setter method for property <tt>httpClient</tt>.
+      * 
+      * @param httpClient value to be assigned to property httpClient
+      */
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
+    /**
+      * Setter method for property <tt>httpClientParams</tt>.
+      * 
+      * @param httpClientParams value to be assigned to property httpClientParams
+      */
+    public void setHttpClientParams(HttpClientParams httpClientParams) {
+        this.httpClientParams = httpClientParams;
     }
 }

@@ -9,44 +9,44 @@ package com.yunxi.common.rpc.http;
 public class HttpClientResponse {
 
     /** 响应结果码 */
-    private int    responseCode;
-    
+    private int    code;
+
     /** 响应结果体 */
-    private Object responseBody;
+    private Object body;
 
     /**
-      * Getter method for property <tt>responseCode</tt>.
+      * Getter method for property <tt>code</tt>.
       * 
-      * @return property value of responseCode
+      * @return property value of code
       */
-    public int getResponseCode() {
-        return responseCode;
+    public int getCode() {
+        return code;
     }
 
     /**
-      * Setter method for property <tt>responseCode</tt>.
+      * Setter method for property <tt>code</tt>.
       * 
-      * @param responseCode value to be assigned to property responseCode
+      * @param code value to be assigned to property code
       */
-    public void setResponseCode(int responseCode) {
-        this.responseCode = responseCode;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     /**
-      * Getter method for property <tt>responseBody</tt>.
+      * Getter method for property <tt>body</tt>.
       * 
-      * @return property value of responseBody
+      * @return property value of body
       */
-    public Object getResponseBody() {
-        return responseBody;
+    public Object getBody() {
+        return body;
     }
 
     /**
-      * Setter method for property <tt>responseBody</tt>.
+      * Setter method for property <tt>body</tt>.
       * 
-      * @param responseBody value to be assigned to property responseBody
+      * @param body value to be assigned to property body
       */
-    public void setResponseBody(Object responseBody) {
-        this.responseBody = responseBody;
+    public void setBody(Object body) {
+        this.body = body;
     }
 }
