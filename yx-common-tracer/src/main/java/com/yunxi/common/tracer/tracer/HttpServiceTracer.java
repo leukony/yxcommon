@@ -25,8 +25,8 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
     private volatile TracerAppender httpServerAppender;
 
     public HttpServiceTracer() {
-        clientTracerType = TracerType.TYPE_HTTP_CLIENT.getType();
-        serverTracerType = TracerType.TYPE_HTTP_SERVER.getType();
+        clientTracerType = TracerType.HTTP_CLIENT.getType();
+        serverTracerType = TracerType.HTTP_SERVER.getType();
     }
 
     /** 

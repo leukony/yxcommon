@@ -3,8 +3,8 @@ package com.yunxi.common.tracer.tracer;
 import java.util.Map;
 
 import com.yunxi.common.tracer.TracerThread;
-import com.yunxi.common.tracer.TracerWriter;
 import com.yunxi.common.tracer.context.TracerContext;
+import com.yunxi.common.tracer.daemon.TracerWriter;
 
 /**
  * 基于网络调用的Tracer的基类

@@ -26,7 +26,7 @@ public enum TracerLogger {
     private String fileName;
     /** 日志文件滚动格式 */
     private String pattern;
-    /** 日志文件暴露天数 */
+    /** 日志文件保留天数 */
     private int    reserve;
 
     TracerLogger(String name, String fileName, String pattern, int reserve) {

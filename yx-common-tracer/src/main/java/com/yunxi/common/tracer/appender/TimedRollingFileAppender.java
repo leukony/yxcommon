@@ -14,7 +14,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.yunxi.common.lang.util.DateUtils;
-import com.yunxi.common.tracer.TracerDelete;
+import com.yunxi.common.tracer.daemon.TracerClear;
 
 /**
  * 基于时间滚动的Tracer的日志打印
@@ -89,7 +89,7 @@ public class TimedRollingFileAppender extends RollingFileAppender {
 
         nextFileName = fillFileName(new Date(this.file.lastModified()));
         
-        TracerDelete.watch(this);
+        TracerClear.watch(this);
     }
 
     /** 

@@ -9,10 +9,10 @@ package com.yunxi.common.tracer.constants;
 public enum TracerType {
 
     /** HTTPClient日志 */
-    TYPE_HTTP_CLIENT('1'),
+    HTTP_CLIENT('1'),
     
     /** HTTPServer日志 */
-    TYPE_HTTP_SERVER('2'),
+    HTTP_SERVER('2'),
     ;
     
     private char type;

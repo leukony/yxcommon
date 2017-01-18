@@ -1,4 +1,4 @@
-package com.yunxi.common.tracer;
+package com.yunxi.common.tracer.daemon;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -11,9 +11,9 @@ import com.yunxi.common.tracer.appender.TracerAppender;
  * 主要用于清理日志
  * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
- * @version $Id: TracerDelete.java, v 0.1 2017年1月11日 下午3:03:24 leukony Exp $
+ * @version $Id: TracerClear.java, v 0.1 2017年1月11日 下午3:03:24 leukony Exp $
  */
-public class TracerDelete implements Runnable {
+public class TracerClear implements Runnable {
 
     private static final long           ONE_HOUR  = 60 * 60;
     private static long                 interval  = ONE_HOUR;
@@ -46,7 +46,7 @@ public class TracerDelete implements Runnable {
      * @param interval
      */
     public static void setScanInterval(long interval) {
-        TracerDelete.interval = interval;
+        TracerClear.interval = interval;
     }
 
     /**
@@ -54,7 +54,7 @@ public class TracerDelete implements Runnable {
      */
     public static void start() {
         if (isRunning.compareAndSet(false, true)) {
-            Thread tracerDelete = new Thread(new TracerDelete());
+            Thread tracerDelete = new Thread(new TracerClear());
             tracerDelete.setName("Tracer-Delete");
             tracerDelete.setDaemon(true);
             tracerDelete.start();
