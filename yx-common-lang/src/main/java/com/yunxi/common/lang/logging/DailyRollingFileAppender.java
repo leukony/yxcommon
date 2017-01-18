@@ -1,4 +1,4 @@
-package com.yunxi.common.monitor.logging;
+package com.yunxi.common.lang.logging;
 
 import java.io.File;
 import java.io.IOException;
