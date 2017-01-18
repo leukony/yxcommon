@@ -9,7 +9,8 @@ import com.yunxi.common.tracer.util.TracerBuilder;
 
 /**
  * Http服务格式编码转换
- * 
+ * <p>非线程安全的</p>
+ *  
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: HttpServiceEncoder.java, v 0.1 2017年1月11日 下午6:12:21 leukony Exp $
  */
