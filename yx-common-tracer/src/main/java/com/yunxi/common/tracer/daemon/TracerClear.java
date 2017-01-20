@@ -24,7 +24,7 @@ public class TracerClear implements Runnable {
         while (true) {
             try {
                 for (TracerAppender appender : watched) {
-                    appender.clean();
+                    appender.clear();
                 }
                 TimeUnit.SECONDS.sleep(interval);
             } catch (Throwable e) {

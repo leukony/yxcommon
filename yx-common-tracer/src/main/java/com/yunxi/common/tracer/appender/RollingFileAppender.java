@@ -12,6 +12,7 @@ import com.yunxi.common.tracer.constants.TracerConstants;
 
 /**
  * 基于滚动的Tracer的日志打印
+ * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: RollingFileAppender.java, v 0.1 2017年1月10日 下午4:35:15 leukony Exp $
  */

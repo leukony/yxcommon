@@ -4,6 +4,7 @@ import java.io.IOException;
 
 /**
  * Tracer的日志打印基类
+ * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: TracerAppender.java, v 0.1 2017年1月10日 下午3:04:43 leukony Exp $
  */
@@ -25,5 +26,5 @@ public interface TracerAppender {
     /**
      * 清理日志
      */
-    void clean();
+    void clear();
 }

@@ -142,10 +142,10 @@ public class TimedRollingFileAppender extends RollingFileAppender {
     }
 
     /** 
-     * @see com.yunxi.common.tracer.appender.TracerAppender#clean()
+     * @see com.yunxi.common.tracer.appender.TracerAppender#clear()
      */
     @Override
-    public void clean() {
+    public void clear() {
         try {
             File parent = file.getParentFile();
             if (parent == null) {
