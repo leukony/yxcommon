@@ -14,8 +14,8 @@ import com.yunxi.common.tracer.util.TracerUtils;
  */
 public abstract class Tracer {
 
-    private static final String TRACE_LOGGINGROOT_KEY = "tracer.loggerroot";
-    private static final String TRACE_APPENDPID_KEY   = "tracer.loggerroot.appendpid";
+    private static final String TRACE_LOGGINGROOT_KEY = "tracer.loggingroot";
+    private static final String TRACE_APPENDPID_KEY   = "tracer.loggingroot.appendpid";
 
     private static final String TRACR_LOGGING_ROOT;
 

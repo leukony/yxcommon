@@ -6,10 +6,10 @@ import com.yunxi.common.tracer.context.TracerContext;
  * Tracer线程上下文
  * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
- * @version $Id: TracerThreadLocal.java, v 0.1 2017年1月12日 下午1:24:18 leukony Exp $
+ * @version $Id: TracerLocal.java, v 0.1 2017年1月12日 下午1:24:18 leukony Exp $
  */
 @SuppressWarnings("rawtypes")
-public class TracerThread {
+public class TracerLocal {
 
     private static ThreadLocal<TracerContext> THREADLOCAL = new ThreadLocal<TracerContext>();
 

@@ -2,7 +2,7 @@ package com.yunxi.common.tracer.tracer;
 
 import java.util.Map;
 
-import com.yunxi.common.tracer.TracerThread;
+import com.yunxi.common.tracer.TracerLocal;
 import com.yunxi.common.tracer.appender.TimedRollingFileAppender;
 import com.yunxi.common.tracer.appender.TracerAppender;
 import com.yunxi.common.tracer.constants.TracerConstants;
@@ -59,7 +59,7 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
         if (traceContext != null) {
             HttpServiceContext httpServiceContext = new HttpServiceContext();
             httpServiceContext.putAllTrace(traceContext);
-            TracerThread.set(httpServiceContext);
+            TracerLocal.set(httpServiceContext);
             return httpServiceContext;
         }
         return null;
