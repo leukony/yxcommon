@@ -14,19 +14,16 @@ import java.util.regex.Pattern;
  */
 public class TraceIdGenerator {
 
-    private static String        IP_16   = "ffffffff";
-    private static String        IP_int  = "255255255255";
-
     private static final String  regex   = "\\b((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\.((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\.((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\.((?!\\d\\d\\d)\\d+|1\\d\\d|2[0-4]\\d|25[0-5])\\b";
     private static final Pattern pattern = Pattern.compile(regex);
-    private static AtomicInteger count   = new AtomicInteger(1000);
+    private static AtomicInteger COUNT   = new AtomicInteger(1000);
+    private static String        IP_16   = "ffffffff";
 
     static {
         try {
             String ipAddress = getInetAddress();
             if (ipAddress != null) {
                 IP_16 = getIP_16(ipAddress);
-                IP_int = getIP_int(ipAddress);
             }
         } catch (Throwable e) {
         }
@@ -47,18 +44,6 @@ public class TraceIdGenerator {
             return getTraceId(getIP_16(ip), System.currentTimeMillis(), getNextId());
         } else {
             return generate();
-        }
-    }
-
-    static String generateIpv4Id() {
-        return IP_int;
-    }
-
-    static String generateIpv4Id(String ip) {
-        if (ip != null && !ip.isEmpty() && validate(ip)) {
-            return getIP_int(ip);
-        } else {
-            return IP_int;
         }
     }
 
@@ -85,10 +70,6 @@ public class TraceIdGenerator {
         return sb.toString();
     }
 
-    private static String getIP_int(String ip) {
-        return ip.replace(".", "");
-    }
-
     private static String getInetAddress() {
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -111,10 +92,11 @@ public class TraceIdGenerator {
 
     private static int getNextId() {
         for (;;) {
-            int current = count.get();
+            int current = COUNT.get();
             int next = (current > 9000) ? 1000 : current + 1;
-            if (count.compareAndSet(current, next))
+            if (COUNT.compareAndSet(current, next)) {
                 return next;
+            }
         }
     }
 }

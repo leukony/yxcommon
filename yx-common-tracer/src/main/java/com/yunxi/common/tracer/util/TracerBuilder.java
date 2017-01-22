@@ -47,6 +47,16 @@ public class TracerBuilder {
 
     /**
      * @param str
+     * @param separator
+     * @return
+     */
+    public TracerBuilder append(String str, String separator) {
+        sb.append(str == null ? StringUtils.EMPTY : str).append(separator);
+        return this;
+    }
+
+    /**
+     * @param str
      * @return
      */
     public TracerBuilder append(long str) {
@@ -76,16 +86,6 @@ public class TracerBuilder {
 
     /**
      * @param str
-     * @param separator
-     * @return
-     */
-    public TracerBuilder append(String str, String separator) {
-        sb.append(str == null ? StringUtils.EMPTY : str).append(separator);
-        return this;
-    }
-
-    /**
-     * @param str
      * @return
      */
     public TracerBuilder append(int str) {
@@ -110,16 +110,7 @@ public class TracerBuilder {
         this.appendEscape(TracerUtils.mapToString(map));
         return this;
     }
-
-    /**
-     * @param str
-     * @return
-     */
-    public TracerBuilder appendEnd(int str) {
-        sb.append(str).append(NEWLINE);
-        return this;
-    }
-
+    
     /**
      * @param str
      * @return
@@ -134,6 +125,15 @@ public class TracerBuilder {
      * @return
      */
     public TracerBuilder appendEnd(long str) {
+        sb.append(str).append(NEWLINE);
+        return this;
+    }
+
+    /**
+     * @param str
+     * @return
+     */
+    public TracerBuilder appendEnd(int str) {
         sb.append(str).append(NEWLINE);
         return this;
     }
