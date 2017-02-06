@@ -141,10 +141,10 @@
 		</resources>
 		<testResources>
 			<testResource>
-					<directory>src/test/java</directory>
-					<includes>
-						<include>**/*</include>
-					</includes>
+				<directory>src/test/java</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
 			</testResource>
 			<testResource>
 				<directory>src/test/resources</directory>
