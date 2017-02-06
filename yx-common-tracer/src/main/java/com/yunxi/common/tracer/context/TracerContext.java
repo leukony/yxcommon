@@ -16,12 +16,18 @@ import org.apache.commons.lang.StringUtils;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class TracerContext<T extends TracerContext> {
-
+    
     /**
      * 复制实例
      * @return 本实例的一个克隆
      */
     public abstract T clone();
+    
+    /**
+     * 判断结果是成功的还是失败的
+     * @return
+     */
+    public abstract boolean isSuccess();
 
     /**
      * 复制Tracer基本属性
@@ -35,7 +41,7 @@ public abstract class TracerContext<T extends TracerContext> {
         to.setResultCode(this.resultCode);
         to.setTracerType(this.tracerType);
         to.setParentContext(this.parentContext);
-        to.setChildTraceIndex(this.childTraceIndex);
+        to.setChildRpcIdIndex(this.childRpcIdIndex);
         to.putAllTrace(this.traceContext);
         return to;
     }
@@ -72,50 +78,50 @@ public abstract class TracerContext<T extends TracerContext> {
     }
 
     /** 上下文计数器 */
-    private AtomicInteger childTraceIndex = new AtomicInteger(0);
+    private AtomicInteger childRpcIdIndex = new AtomicInteger(0);
 
     /**
-     * 获取下一个子上下文的TraceIndex
+     * 获取下一个子上下文的RpcId
      * @return
      */
-    public String nextChildTraceIndex() {
+    public String nextChildRpcId() {
         StringBuilder sb = new StringBuilder();
         sb.append(traceContext.get(RPC_ID));
-        sb.append(TRACE_INDEX_SEPARATOR);
-        sb.append(childTraceIndex.incrementAndGet());
+        sb.append(RPC_ID_SEPARATOR);
+        sb.append(childRpcIdIndex.incrementAndGet());
         return sb.toString();
     }
 
     /**
-     * 获取上一个子上下文的TraceIndex
+     * 获取上一个子上下文的RpcId
      * @return
      */
-    public String lastChildTraceIndex() {
+    public String lastChildRpcId() {
         StringBuilder sb = new StringBuilder();
         sb.append(traceContext.get(RPC_ID));
-        sb.append(TRACE_INDEX_SEPARATOR);
-        sb.append(childTraceIndex.get());
+        sb.append(RPC_ID_SEPARATOR);
+        sb.append(childRpcIdIndex.get());
         return sb.toString();
     }
 
     /**
-      * Getter method for property <tt>childTraceIndex</tt>.
+      * Getter method for property <tt>childRpcIdIndex</tt>.
       * 
-      * @return property value of childTraceIndex
+      * @return property value of childRpcIdIndex
       */
-    public AtomicInteger getChildTraceIndex() {
-        return childTraceIndex;
+    public AtomicInteger getChildRpcIdIndex() {
+        return childRpcIdIndex;
     }
-
+    
     /**
-      * Setter method for property <tt>childTraceIndex</tt>.
+      * Setter method for property <tt>childRpcIdIndex</tt>.
       * 
-      * @param childTraceIndex value to be assigned to property childTraceIndex
+      * @param childRpcIdIndex value to be assigned to property childRpcIdIndex
       */
-    public void setChildTraceIndex(AtomicInteger childTraceIndex) {
-        this.childTraceIndex = childTraceIndex;
+    public void setChildRpcIdIndex(AtomicInteger childRpcIdIndex) {
+        this.childRpcIdIndex = childRpcIdIndex;
     }
-
+    
     /** 开始时间  */
     private long          startTime;
     /** 结束时间 */

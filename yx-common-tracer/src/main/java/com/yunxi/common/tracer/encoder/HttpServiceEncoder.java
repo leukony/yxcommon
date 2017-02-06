@@ -2,6 +2,7 @@ package com.yunxi.common.tracer.encoder;
 
 import java.io.IOException;
 
+import com.yunxi.common.lang.enums.CommonYN;
 import com.yunxi.common.lang.util.DateUtils;
 import com.yunxi.common.tracer.appender.TracerAppender;
 import com.yunxi.common.tracer.context.HttpServiceContext;
@@ -30,6 +31,7 @@ public class HttpServiceEncoder implements TracerEncoder<HttpServiceContext> {
           .append(ctx.getTraceId())
           .append(ctx.getRpcId())
           .appendEscape(ctx.getThreadName())
+          .append(CommonYN.get(ctx.isSuccess()).name())
           .append(ctx.getUsedTime())
           .appendEscape(ctx.getUrl())
           .append(ctx.getMethod())

@@ -141,7 +141,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
     public void cloneTraceContext(TracerContext parent, T child) {
         // 公共属性
         child.setTraceId(parent.getTraceId());
-        child.setRpcId(parent.nextChildTraceIndex());
+        child.setRpcId(parent.nextChildRpcId());
         // TODO
         child.setParentContext(null);
         // 系统属性

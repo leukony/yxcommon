@@ -15,10 +15,10 @@ public class TracerConstants {
     public static final String  TRACE_ID                 = "traceId";
     /** RpcId 放在透传上下文中的 key */
     public static final String  RPC_ID                   = "rpcId";
-    /** TraceIndex 分隔符 */
-    public static final String  TRACE_INDEX_SEPARATOR    = ".";
-    /** TraceIndex 根 */
+    /** RpcId 根 */
     public static final String  RPC_ID_ROOT              = "0";
+    /** RpcId 分隔符 */
+    public static final String  RPC_ID_SEPARATOR         = ".";
     /** Trace日志默认编码 */
     public static final Charset DEFAULT_CHARSET          = StandardCharsets.UTF_8;
 

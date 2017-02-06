@@ -16,7 +16,7 @@ public class HttpServiceContext extends TracerContext<HttpServiceContext> {
     private long   requestSize;
     /** 响应的大小 */
     private long   responseSize;
-    
+
     /**
       * Getter method for property <tt>url</tt>.
       * 
@@ -100,5 +100,16 @@ public class HttpServiceContext extends TracerContext<HttpServiceContext> {
         httpServiceContext.requestSize = this.requestSize;
         httpServiceContext.responseSize = this.responseSize;
         return super.cloneTo(httpServiceContext);
+    }
+
+    /** 
+     * @see com.yunxi.common.tracer.context.TracerContext#isSuccess()
+     */
+    @Override
+    public boolean isSuccess() {
+        // 1开头、2开头和302的结果码算是成功的，其他算是失败的
+        String code = super.getResultCode();
+        return code != null && code.length() > 0
+               && (code.charAt(0) == '1' || code.charAt(0) == '2' || code.trim().equals("302"));
     }
 }
