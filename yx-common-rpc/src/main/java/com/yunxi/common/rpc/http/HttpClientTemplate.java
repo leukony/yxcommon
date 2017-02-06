@@ -169,8 +169,8 @@ public class HttpClientTemplate {
             if (httpServiceContext != null) {
                 httpMethod.setRequestHeader(TracerConstants.TRACE_ID,
                     httpServiceContext.getTraceId());
-                httpMethod.setRequestHeader(TracerConstants.TRACE_INDEX,
-                    httpServiceContext.getTraceIndex());
+                httpMethod.setRequestHeader(TracerConstants.RPC_ID,
+                    httpServiceContext.getRpcId());
 
                 httpServiceContext.setCurrentApp(appName);
                 httpServiceContext.setMethod(httpMethod.getName());

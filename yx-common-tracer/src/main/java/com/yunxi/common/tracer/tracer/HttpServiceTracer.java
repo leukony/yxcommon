@@ -36,7 +36,7 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
     protected HttpServiceContext getDefaultContext() {
         HttpServiceContext httpServiceContext = new HttpServiceContext();
         httpServiceContext.setTraceId(TraceIdGenerator.generate());
-        httpServiceContext.setTraceIndex(TracerConstants.TRACE_INDEX_ROOT);
+        httpServiceContext.setRpcId(TracerConstants.RPC_ID_ROOT);
         return httpServiceContext;
     }
     

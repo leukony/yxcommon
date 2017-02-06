@@ -99,6 +99,6 @@ public class HttpServiceContext extends TracerContext<HttpServiceContext> {
         httpServiceContext.method = this.method;
         httpServiceContext.requestSize = this.requestSize;
         httpServiceContext.responseSize = this.responseSize;
-        return super.clone(httpServiceContext);
+        return super.cloneTo(httpServiceContext);
     }
 }

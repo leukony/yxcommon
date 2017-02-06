@@ -28,7 +28,7 @@ public abstract class TracerContext<T extends TracerContext> {
      * @param to
      * @return
      */
-    public T clone(T to) {
+    public T cloneTo(T to) {
         to.setStartTime(this.startTime);
         to.setFinishTime(this.finishTime);
         to.setCurrentApp(this.currentApp);
@@ -51,12 +51,12 @@ public abstract class TracerContext<T extends TracerContext> {
         putTrace(TRACE_ID, traceId == null ? StringUtils.EMPTY : traceId);
     }
 
-    public String getTraceIndex() {
-        return getTrace(TRACE_INDEX);
+    public String getRpcId() {
+        return getTrace(RPC_ID);
     }
 
-    public void setTraceIndex(String traceIndex) {
-        putTrace(TRACE_INDEX, traceIndex == null ? StringUtils.EMPTY : traceIndex);
+    public void setRpcId(String rpcId) {
+        putTrace(RPC_ID, rpcId == null ? StringUtils.EMPTY : rpcId);
     }
 
     public void putTrace(String key, String value) {
@@ -80,7 +80,7 @@ public abstract class TracerContext<T extends TracerContext> {
      */
     public String nextChildTraceIndex() {
         StringBuilder sb = new StringBuilder();
-        sb.append(traceContext.get(TRACE_INDEX));
+        sb.append(traceContext.get(RPC_ID));
         sb.append(TRACE_INDEX_SEPARATOR);
         sb.append(childTraceIndex.incrementAndGet());
         return sb.toString();
@@ -92,7 +92,7 @@ public abstract class TracerContext<T extends TracerContext> {
      */
     public String lastChildTraceIndex() {
         StringBuilder sb = new StringBuilder();
-        sb.append(traceContext.get(TRACE_INDEX));
+        sb.append(traceContext.get(RPC_ID));
         sb.append(TRACE_INDEX_SEPARATOR);
         sb.append(childTraceIndex.get());
         return sb.toString();

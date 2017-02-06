@@ -46,21 +46,21 @@ public class HttpTracerFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         // 1、获取WEB请求中的Tracer参数
-        String tracerId = request.getHeader(TracerConstants.TRACE_ID);
-        String tracerIndex = request.getHeader(TracerConstants.TRACE_INDEX);
+        String traceId = request.getHeader(TracerConstants.TRACE_ID);
+        String rpcId = request.getHeader(TracerConstants.RPC_ID);
         // 兼容不同平台存放Tracer参数的方式不一样
-        if (StringUtils.isBlank(tracerId)) {
-            tracerId = request.getParameter(TracerConstants.TRACE_ID);
+        if (StringUtils.isBlank(traceId)) {
+            traceId = request.getParameter(TracerConstants.TRACE_ID);
         }
-        if (StringUtils.isBlank(tracerIndex)) {
-            tracerIndex = request.getParameter(TracerConstants.TRACE_INDEX);
+        if (StringUtils.isBlank(rpcId)) {
+            rpcId = request.getParameter(TracerConstants.RPC_ID);
         }
 
         Map<String, String> tracerContext = null;
-        if (StringUtils.isNotBlank(tracerId) && StringUtils.isNotBlank(tracerIndex)) {
+        if (StringUtils.isNotBlank(traceId) && StringUtils.isNotBlank(rpcId)) {
             tracerContext = new HashMap<String, String>();
-            tracerContext.put(TracerConstants.TRACE_ID, tracerId);
-            tracerContext.put(TracerConstants.TRACE_INDEX, tracerIndex);
+            tracerContext.put(TracerConstants.TRACE_ID, traceId);
+            tracerContext.put(TracerConstants.RPC_ID, rpcId);
         }
 
         // 2、从工厂中获取HttpServerTracer

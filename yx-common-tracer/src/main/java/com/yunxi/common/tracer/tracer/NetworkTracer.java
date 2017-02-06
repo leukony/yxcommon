@@ -30,7 +30,6 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
     /**
      * 开始网络调用
      * @return
-     * @throws Throwable
      */
     public T startInvoke() {
         try {
@@ -51,7 +50,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
             return child;
         } catch (Throwable t) {
             // TODO Trace自身异常处理
-            return null;
+            return null;    
         }
     }
 
@@ -59,7 +58,6 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      * 网络调用完毕
      * @param resultCode
      * @param expectedType
-     * @throws Throwable
      */
     public void finishInvoke(String resultCode, Class<? extends TracerContext> expectedType) {
         try {
@@ -85,7 +83,6 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
     /**
      * 开始处理网络调用
      * @return
-     * @throws Throwable
      */
     @SuppressWarnings("unchecked")
     public T startProcess() {
@@ -125,7 +122,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
         } catch (Throwable t) {
             // TODO Trace自身异常处理
         } finally {
-            TracerLocal.clear();
+            clear();
         }
     }
     
@@ -144,14 +141,12 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
     public void cloneTraceContext(TracerContext parent, T child) {
         // 公共属性
         child.setTraceId(parent.getTraceId());
-        child.setTraceIndex(parent.nextChildTraceIndex());
-        // 系统属性
-        // 业务属性
-
+        child.setRpcId(parent.nextChildTraceIndex());
         // TODO
         child.setParentContext(null);
+        // 系统属性
+        // 业务属性
     }
-    
 
     /**
      * 创建默认的 Tracer日志上下文    

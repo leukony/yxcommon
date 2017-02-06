@@ -2,8 +2,6 @@ package com.yunxi.common.tracer.tracer;
 
 import java.io.File;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.yunxi.common.tracer.daemon.TracerClear;
 import com.yunxi.common.tracer.util.TracerUtils;
 
@@ -23,14 +21,14 @@ public abstract class Tracer {
     static {
         // 获取Trace日志根目录，默认为"当前用户根目录/logs/tracelog"
         String loggingRoot = System.getProperty(TRACE_LOGGINGROOT_KEY);
-        if (StringUtils.isBlank(loggingRoot)) {
+        if (loggingRoot == null || loggingRoot.length() == 0) {
             loggingRoot = System.getProperty("user.home") + File.separator + "logs";
         }
         loggingRoot = loggingRoot + File.separator + "trace";
 
         // 获取Trace日志根目录是否需要追加PID，解决单机多应用部署日志目录冲突
         String appendPid = System.getProperty(TRACE_APPENDPID_KEY);
-        if (StringUtils.equalsIgnoreCase(appendPid, Boolean.TRUE.toString())) {
+        if (Boolean.TRUE.toString().equalsIgnoreCase(appendPid)) {
             loggingRoot = loggingRoot + File.separator + TracerUtils.getPID();
         }
 
