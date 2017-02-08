@@ -46,30 +46,12 @@ public enum TracerLogger {
     }
 
     /**
-      * Setter method for property <tt>name</tt>.
-      * 
-      * @param name value to be assigned to property name
-      */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
       * Getter method for property <tt>fileName</tt>.
       * 
       * @return property value of fileName
       */
     public String getFileName() {
         return fileName;
-    }
-
-    /**
-      * Setter method for property <tt>fileName</tt>.
-      * 
-      * @param fileName value to be assigned to property fileName
-      */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     /**
@@ -82,29 +64,11 @@ public enum TracerLogger {
     }
 
     /**
-      * Setter method for property <tt>pattern</tt>.
-      * 
-      * @param pattern value to be assigned to property pattern
-      */
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
-    }
-
-    /**
       * Getter method for property <tt>reserve</tt>.
       * 
       * @return property value of reserve
       */
     public int getReserve() {
         return reserve;
-    }
-
-    /**
-      * Setter method for property <tt>reserve</tt>.
-      * 
-      * @param reserve value to be assigned to property reserve
-      */
-    public void setReserve(int reserve) {
-        this.reserve = reserve;
     }
 }
