@@ -29,7 +29,7 @@ public abstract class RollingFileAppender implements TracerAppender {
 
     /** 日志缓冲大小 */
     protected final int            bufferSize;
-    
+
     protected long                 flushTime      = 0L;
 
     protected BufferedOutputStream buffer         = null;

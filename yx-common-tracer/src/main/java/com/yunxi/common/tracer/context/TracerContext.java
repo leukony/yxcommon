@@ -16,13 +16,13 @@ import org.apache.commons.lang.StringUtils;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class TracerContext<T extends TracerContext> {
-    
+
     /**
      * 复制实例
      * @return 本实例的一个克隆
      */
     public abstract T clone();
-    
+
     /**
      * 判断结果是成功的还是失败的
      * @return
@@ -112,7 +112,7 @@ public abstract class TracerContext<T extends TracerContext> {
     public AtomicInteger getChildRpcIdIndex() {
         return childRpcIdIndex;
     }
-    
+
     /**
       * Setter method for property <tt>childRpcIdIndex</tt>.
       * 
@@ -121,7 +121,7 @@ public abstract class TracerContext<T extends TracerContext> {
     public void setChildRpcIdIndex(AtomicInteger childRpcIdIndex) {
         this.childRpcIdIndex = childRpcIdIndex;
     }
-    
+
     /** 开始时间  */
     private long          startTime;
     /** 结束时间 */
@@ -183,7 +183,7 @@ public abstract class TracerContext<T extends TracerContext> {
     public void setFinishTime(long finishTime) {
         this.finishTime = finishTime;
     }
-    
+
     /**
       * Getter method for property <tt>tracerType</tt>.
       * 
@@ -192,7 +192,7 @@ public abstract class TracerContext<T extends TracerContext> {
     public char getTracerType() {
         return tracerType;
     }
-    
+
     /**
       * Setter method for property <tt>tracerType</tt>.
       * 

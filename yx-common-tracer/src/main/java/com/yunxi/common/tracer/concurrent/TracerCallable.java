@@ -13,7 +13,7 @@ import com.yunxi.common.tracer.util.TracerUtils;
  * @version $Id: TracerCallable.java, v 0.1 2017年1月11日 下午7:02:03 leukony Exp $
  */
 public abstract class TracerCallable<T extends Object> implements Callable<T> {
-    
+
     @SuppressWarnings("rawtypes")
     private TracerContext tracerContext = TracerUtils.cloneContext();
 

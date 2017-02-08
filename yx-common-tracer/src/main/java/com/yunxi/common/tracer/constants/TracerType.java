@@ -10,17 +10,16 @@ public enum TracerType {
 
     /** HTTPClient日志 */
     HTTP_CLIENT('1'),
-    
+
     /** HTTPServer日志 */
-    HTTP_SERVER('2'),
-    ;
-    
+    HTTP_SERVER('2'), ;
+
     private char type;
-    
+
     TracerType(char type) {
         this.type = type;
     }
-    
+
     /**
       * Getter method for property <tt>type</tt>.
       * 
@@ -29,7 +28,7 @@ public enum TracerType {
     public char getType() {
         return type;
     }
-    
+
     /**
       * Setter method for property <tt>type</tt>.
       * 

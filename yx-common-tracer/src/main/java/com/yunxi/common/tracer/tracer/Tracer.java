@@ -42,7 +42,7 @@ public abstract class Tracer {
             // TODO Error LOG
         }
     }
-    
+
     /**
      * 获取日志根目录
      * @return

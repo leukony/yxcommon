@@ -50,7 +50,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
             return child;
         } catch (Throwable t) {
             // TODO Trace自身异常处理
-            return null;    
+            return null;
         }
     }
 
@@ -62,7 +62,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
     public void finishInvoke(String resultCode, Class<? extends TracerContext> expectedType) {
         try {
             createClientAppenderIfNecessary();
-            
+
             TracerContext ctx = TracerLocal.get();
             if (ctx != null) {
                 ctx.setResultCode(resultCode);
@@ -110,7 +110,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
     public void finishProcess(String resultCode) {
         try {
             createServerAppenderIfNecessary();
-            
+
             TracerContext ctx = TracerLocal.get();
             if (ctx != null) {
                 ctx.setResultCode(resultCode);
@@ -125,7 +125,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
             clear();
         }
     }
-    
+
     /**
      * 清理日志上下文
      */
@@ -160,19 +160,19 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      * @return 根据父Tracer日志上下文创建子Tracer日志上下文
      */
     protected abstract T createChildContext(TracerContext parentCtx);
-    
+
     /**
      * 根据Map创建 TracerContext，并且设置到 ThreadLocal中去
      * @param tracerContext
      * @return
      */
     protected abstract T setContext(Map<String, String> tracerContext);
-    
+
     /**
      * 创建网络调用的Appender
      */
     protected abstract void createClientAppenderIfNecessary();
-    
+
     /**
      * 创建处理网络调用的Appender 
      */

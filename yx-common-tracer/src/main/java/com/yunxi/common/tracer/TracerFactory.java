@@ -13,7 +13,7 @@ public class TracerFactory {
     private static volatile HttpServiceTracer httpClientTracer;
 
     private static volatile HttpServiceTracer httpServerTracer;
-    
+
     public static HttpServiceTracer getHttpClientTracer() {
         if (httpClientTracer == null) {
             synchronized (TracerFactory.class) {
@@ -24,7 +24,7 @@ public class TracerFactory {
         }
         return httpClientTracer;
     }
-    
+
     public static HttpServiceTracer getHttpServerTracer() {
         if (httpServerTracer == null) {
             synchronized (TracerFactory.class) {

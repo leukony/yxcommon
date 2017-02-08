@@ -39,7 +39,7 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
         httpServiceContext.setRpcId(TracerConstants.RPC_ID_ROOT);
         return httpServiceContext;
     }
-    
+
     /** 
      * @see com.yunxi.common.tracer.tracer.NetworkTracer#createChildContext(com.yunxi.common.tracer.context.TracerContext)
      */

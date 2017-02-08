@@ -18,7 +18,7 @@ import com.yunxi.common.tracer.context.TracerContext;
  */
 @SuppressWarnings("rawtypes")
 public class TracerUtils {
-    
+
     /**
      * 克隆Tracer上下文
      * @return

@@ -110,7 +110,7 @@ public class TracerBuilder {
         this.appendEscape(TracerUtils.mapToString(map));
         return this;
     }
-    
+
     /**
      * @param str
      * @return

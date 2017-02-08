@@ -14,7 +14,7 @@ import com.yunxi.common.tracer.context.TracerContext;
  */
 @SuppressWarnings("rawtypes")
 public interface TracerEncoder<T extends TracerContext> {
-    
+
     /**
      * 转换日志格式编码
      * @param ctx
