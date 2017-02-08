@@ -1,13 +1,12 @@
 package com.yunxi.common.tracer.util;
 
+import static com.yunxi.common.tracer.constants.TracerConstants.COMMA;
+import static com.yunxi.common.tracer.constants.TracerConstants.COMMA_ESCAPE;
 import static com.yunxi.common.tracer.constants.TracerConstants.DEFAULT_BUFFER_SIZE;
-import static com.yunxi.common.tracer.constants.TracerConstants.DEFAULT_SEPARATOR;
-import static com.yunxi.common.tracer.constants.TracerConstants.DEFAULT_SEPARATOR_ESCAPE;
 import static com.yunxi.common.tracer.constants.TracerConstants.NEWLINE;
+import static com.yunxi.common.tracer.constants.TracerConstants.EMPTY;
 
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Tracer日志输出的字符串拼接工具
@@ -17,17 +16,17 @@ import org.apache.commons.lang.StringUtils;
  */
 public class TracerBuilder {
 
-    private static char   separator       = DEFAULT_SEPARATOR;
-    private static String separatorStr    = separator + "";
-    private static String spearatorEscape = DEFAULT_SEPARATOR_ESCAPE;
-    private StringBuilder sb;
+    private static char     separator           = COMMA;
+    private static String   separatorStr        = separator + "";
+    private static String   spearatorEscape     = COMMA_ESCAPE;
+    private StringBuilder   sb;
 
     public TracerBuilder() {
-        this(DEFAULT_BUFFER_SIZE, DEFAULT_SEPARATOR);
+        this(DEFAULT_BUFFER_SIZE, COMMA);
     }
 
     public TracerBuilder(int size) {
-        this(size, DEFAULT_SEPARATOR);
+        this(size, COMMA);
     }
 
     @SuppressWarnings("static-access")
@@ -41,7 +40,7 @@ public class TracerBuilder {
      * @return
      */
     public TracerBuilder append(String str) {
-        sb.append(str == null ? StringUtils.EMPTY : str).append(separator);
+        sb.append(str == null ? EMPTY : str).append(separator);
         return this;
     }
 
@@ -51,7 +50,7 @@ public class TracerBuilder {
      * @return
      */
     public TracerBuilder append(String str, String separator) {
-        sb.append(str == null ? StringUtils.EMPTY : str).append(separator);
+        sb.append(str == null ? EMPTY : str).append(separator);
         return this;
     }
 
@@ -116,7 +115,7 @@ public class TracerBuilder {
      * @return
      */
     public TracerBuilder appendEnd(String str) {
-        sb.append(str == null ? StringUtils.EMPTY : str).append(NEWLINE);
+        sb.append(str == null ? EMPTY : str).append(NEWLINE);
         return this;
     }
 
@@ -161,7 +160,7 @@ public class TracerBuilder {
      * @return
      */
     public TracerBuilder appendRaw(String str) {
-        sb.append(str == null ? StringUtils.EMPTY : str);
+        sb.append(str == null ? EMPTY : str);
         return this;
     }
 
@@ -169,7 +168,7 @@ public class TracerBuilder {
      * 将字符串中分隔符变成对应转义字符
      */
     public TracerBuilder appendEscape(String str) {
-        str = (str == null) ? StringUtils.EMPTY : str;
+        str = (str == null) ? EMPTY : str;
         str = str.replace(separatorStr, spearatorEscape);
         return append(str);
     }
@@ -178,7 +177,7 @@ public class TracerBuilder {
      * 将字符串中分隔符变成对应转义字符
      */
     public TracerBuilder appendEscapeRaw(String str) {
-        str = (str == null) ? StringUtils.EMPTY : str;
+        str = (str == null) ? EMPTY : str;
         str = str.replace(separatorStr, spearatorEscape);
         return appendRaw(str);
     }
@@ -187,7 +186,7 @@ public class TracerBuilder {
      * 将字符串中分隔符变成对应转义字符
      */
     public TracerBuilder appendEscapeEnd(String str) {
-        str = (str == null) ? StringUtils.EMPTY : str;
+        str = (str == null) ? EMPTY : str;
         str = str.replace(separatorStr, spearatorEscape);
         return appendEnd(str);
     }

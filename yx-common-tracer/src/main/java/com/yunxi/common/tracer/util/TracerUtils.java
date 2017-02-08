@@ -5,8 +5,6 @@ import static com.yunxi.common.tracer.constants.TracerConstants.*;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.yunxi.common.tracer.TracerLocal;
 import com.yunxi.common.tracer.context.TracerContext;
 
@@ -34,22 +32,22 @@ public class TracerUtils {
      * @return
      */
     public static String getPID() {
-        String processName = ManagementFactory.getRuntimeMXBean().getName();
+        String process = ManagementFactory.getRuntimeMXBean().getName();
 
-        if (StringUtils.isBlank(processName)) {
-            return StringUtils.EMPTY;
+        if (process == null || process.trim().length() == 0) {
+            return EMPTY;
         }
 
-        String[] processSplitName = processName.split("@");
+        String[] processSplit = process.split("@");
 
-        if (processSplitName.length == 0) {
-            return StringUtils.EMPTY;
+        if (processSplit.length == 0) {
+            return EMPTY;
         }
 
-        String pid = processSplitName[0];
+        String pid = processSplit[0];
 
-        if (StringUtils.isBlank(pid)) {
-            return StringUtils.EMPTY;
+        if (pid == null || pid.trim().length() == 0) {
+            return EMPTY;
         }
 
         return pid;
@@ -59,28 +57,26 @@ public class TracerUtils {
      * 将map转成string, 如{"k1":"v1", "k2":"v2"} => k1=v1&k2=v2&
      */
     public static String mapToString(Map<String, String> map) {
-        StringBuffer sb = new StringBuffer(DEFAULT_BUFFER_SIZE);
-
         if (map == null) {
-            sb.append(StringUtils.EMPTY);
-        } else {
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                String key = escape(entry.getKey());
-                String val = escape(entry.getValue());
-                sb.append(key).append(EQUAL_SEPARATOR).append(val).append(AND_SEPARATOR);
-            }
+            return EMPTY;
         }
 
+        StringBuffer sb = new StringBuffer(DEFAULT_BUFFER_SIZE);
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            String key = escapePercentAndEqual(entry.getKey());
+            String val = escapePercentAndEqual(entry.getValue());
+            sb.append(key).append(EQUAL).append(val).append(AND);
+        }
         return sb.toString();
     }
 
     /**
      * 替换str中的"&"，"=" 和 "%"
      */
-    private static String escape(String str) {
-        str = escape(str, PERCENT, PERCENT_ESCAPE);
-        str = escape(str, AND_SEPARATOR, AND_SEPARATOR_ESCAPE);
-        str = escape(str, EQUAL_SEPARATOR, EQUAL_SEPARATOR_ESCAPE);
+    private static String escapePercentAndEqual(String str) {
+        str = escape(str, String.valueOf(PERCENT), PERCENT_ESCAPE);
+        str = escape(str, String.valueOf(AND), AND_ESCAPE);
+        str = escape(str, String.valueOf(EQUAL), EQUAL_ESCAPE);
         return str;
     }
 
@@ -88,7 +84,6 @@ public class TracerUtils {
      * 将str中的oldStr替换为newStr
      */
     private static String escape(String str, String oldStr, String newStr) {
-        return str == null ? StringUtils.EMPTY : str.replace(oldStr, newStr);
+        return str == null ? EMPTY : str.replace(oldStr, newStr);
     }
-
 }
