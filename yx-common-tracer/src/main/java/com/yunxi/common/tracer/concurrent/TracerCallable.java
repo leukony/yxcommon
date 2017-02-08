@@ -12,7 +12,7 @@ import com.yunxi.common.tracer.util.TracerUtils;
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: TracerCallable.java, v 0.1 2017年1月11日 下午7:02:03 leukony Exp $
  */
-public abstract class TracerCallable<T extends Object> implements Callable<T> {
+public abstract class TracerCallable<T> implements Callable<T> {
 
     @SuppressWarnings("rawtypes")
     private TracerContext tracerContext = TracerUtils.cloneContext();
@@ -22,7 +22,7 @@ public abstract class TracerCallable<T extends Object> implements Callable<T> {
         try {
             return doCall();
         } finally {
-            TracerLocal.set(null);
+            TracerLocal.clear();
         }
     }
 

@@ -20,7 +20,7 @@ public abstract class TracerRunnable implements Runnable {
         try {
             doRun();
         } finally {
-            TracerLocal.set(null);
+            TracerLocal.clear();
         }
     }
 
