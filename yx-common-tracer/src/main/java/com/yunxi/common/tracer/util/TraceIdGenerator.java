@@ -39,7 +39,7 @@ public class TraceIdGenerator {
         return getTraceId(IP_16, System.currentTimeMillis(), getNextId());
     }
 
-    static String generate(String ip) {
+    public static String generate(String ip) {
         if (ip != null && !ip.isEmpty() && validate(ip)) {
             return getTraceId(getIP_16(ip), System.currentTimeMillis(), getNextId());
         } else {

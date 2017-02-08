@@ -19,12 +19,11 @@ public abstract class Tracer {
     private static final String TRACR_LOGGING_ROOT;
 
     static {
-        // 获取Trace日志根目录，默认为"当前用户根目录/logs/tracelog"
+        // 获取Trace日志根目录，默认为"当前用户根目录/trace"
         String loggingRoot = System.getProperty(TRACE_LOGGINGROOT_KEY);
-        if (loggingRoot == null || loggingRoot.length() == 0) {
-            loggingRoot = System.getProperty("user.home") + File.separator + "logs";
+        if (loggingRoot == null || loggingRoot.trim().length() == 0) {
+            loggingRoot = System.getProperty("user.home") + File.separator + "trace";
         }
-        loggingRoot = loggingRoot + File.separator + "trace";
 
         // 获取Trace日志根目录是否需要追加PID，解决单机多应用部署日志目录冲突
         String appendPid = System.getProperty(TRACE_APPENDPID_KEY);
