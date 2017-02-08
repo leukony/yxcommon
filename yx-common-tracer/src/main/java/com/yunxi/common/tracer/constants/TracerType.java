@@ -28,13 +28,4 @@ public enum TracerType {
     public char getType() {
         return type;
     }
-
-    /**
-      * Setter method for property <tt>type</tt>.
-      * 
-      * @param type value to be assigned to property type
-      */
-    public void setType(char type) {
-        this.type = type;
-    }
 }
