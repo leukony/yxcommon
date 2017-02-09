@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang.StringUtils;
+import com.yunxi.common.tracer.constants.TracerConstants;
 
 /**
  * Tracer日志上下文
@@ -54,7 +54,7 @@ public abstract class TracerContext<T extends TracerContext> {
     }
 
     public void setTraceId(String traceId) {
-        putTrace(TRACE_ID, traceId == null ? StringUtils.EMPTY : traceId);
+        putTrace(TRACE_ID, traceId == null ? TracerConstants.EMPTY : traceId);
     }
 
     public String getRpcId() {
@@ -62,15 +62,15 @@ public abstract class TracerContext<T extends TracerContext> {
     }
 
     public void setRpcId(String rpcId) {
-        putTrace(RPC_ID, rpcId == null ? StringUtils.EMPTY : rpcId);
+        putTrace(RPC_ID, rpcId == null ? TracerConstants.EMPTY : rpcId);
     }
 
     public void putTrace(String key, String value) {
-        this.traceContext.put(key, value);
+        traceContext.put(key, value);
     }
 
     public String getTrace(String key) {
-        return this.traceContext.get(key);
+        return traceContext.get(key);
     }
 
     public void putAllTrace(Map<String, String> traceContext) {

@@ -17,6 +17,30 @@ public class HttpServiceContext extends TracerContext<HttpServiceContext> {
     /** 响应的大小 */
     private long   responseSize;
 
+    /** 
+     * @see com.yunxi.common.tracer.context.TracerContext#clone()
+     */
+    @Override
+    public HttpServiceContext clone() {
+        HttpServiceContext httpServiceContext = super.cloneTo(new HttpServiceContext());
+        httpServiceContext.url = this.url;
+        httpServiceContext.method = this.method;
+        httpServiceContext.requestSize = this.requestSize;
+        httpServiceContext.responseSize = this.responseSize;
+        return httpServiceContext;
+    }
+
+    /** 
+     * @see com.yunxi.common.tracer.context.TracerContext#isSuccess()
+     */
+    @Override
+    public boolean isSuccess() {
+        // 1开头、2开头和302的结果码算是成功的，其他算是失败的
+        String code = super.getResultCode();
+        return code != null && code.length() > 0
+               && (code.charAt(0) == '1' || code.charAt(0) == '2' || code.trim().equals("302"));
+    }
+
     /**
       * Getter method for property <tt>url</tt>.
       * 
@@ -87,29 +111,5 @@ public class HttpServiceContext extends TracerContext<HttpServiceContext> {
       */
     public void setResponseSize(long responseSize) {
         this.responseSize = responseSize;
-    }
-
-    /** 
-     * @see com.yunxi.common.tracer.context.TracerContext#clone()
-     */
-    @Override
-    public HttpServiceContext clone() {
-        HttpServiceContext httpServiceContext = new HttpServiceContext();
-        httpServiceContext.url = this.url;
-        httpServiceContext.method = this.method;
-        httpServiceContext.requestSize = this.requestSize;
-        httpServiceContext.responseSize = this.responseSize;
-        return super.cloneTo(httpServiceContext);
-    }
-
-    /** 
-     * @see com.yunxi.common.tracer.context.TracerContext#isSuccess()
-     */
-    @Override
-    public boolean isSuccess() {
-        // 1开头、2开头和302的结果码算是成功的，其他算是失败的
-        String code = super.getResultCode();
-        return code != null && code.length() > 0
-               && (code.charAt(0) == '1' || code.charAt(0) == '2' || code.trim().equals("302"));
     }
 }
