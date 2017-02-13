@@ -46,7 +46,7 @@ public abstract class TracerContext<T extends TracerContext> {
         return to;
     }
 
-    /** 扁平化的 Map 存放各种Trace的数据 */
+    /** 存放各种Trace的数据 */
     private Map<String, String> traceContext = new HashMap<String, String>();
 
     public String getTraceId() {
@@ -86,7 +86,7 @@ public abstract class TracerContext<T extends TracerContext> {
      */
     public String nextChildRpcId() {
         StringBuilder sb = new StringBuilder();
-        sb.append(traceContext.get(RPC_ID));
+        sb.append(getRpcId());
         sb.append(RPC_ID_SEPARATOR);
         sb.append(childRpcIdIndex.incrementAndGet());
         return sb.toString();
@@ -98,7 +98,7 @@ public abstract class TracerContext<T extends TracerContext> {
      */
     public String lastChildRpcId() {
         StringBuilder sb = new StringBuilder();
-        sb.append(traceContext.get(RPC_ID));
+        sb.append(getRpcId());
         sb.append(RPC_ID_SEPARATOR);
         sb.append(childRpcIdIndex.get());
         return sb.toString();
