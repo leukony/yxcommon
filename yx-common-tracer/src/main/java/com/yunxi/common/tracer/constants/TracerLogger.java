@@ -12,11 +12,11 @@ public enum TracerLogger {
 
     HTTP_CLIENT_DIGEST("http_client_digest", "httpclient-digest.log",
                        TimedRollingFileAppender.HOURLY_ROLLING_PATTERN,
-                       TimedRollingFileAppender.DEFAULT_LOG_RESERVE_DAY),
+                       TimedRollingFileAppender.DEFAULT_RESERVE_DAY),
 
     HTTP_SERVER_DIGEST("http_server_digest", "httpserver-digest.log",
                        TimedRollingFileAppender.HOURLY_ROLLING_PATTERN,
-                       TimedRollingFileAppender.DEFAULT_LOG_RESERVE_DAY),
+                       TimedRollingFileAppender.DEFAULT_RESERVE_DAY),
 
     ;
 

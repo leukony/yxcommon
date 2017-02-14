@@ -5,10 +5,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.yunxi.common.tracer.constants.TracerConstants;
 
 /**
  * 基于滚动的Tracer的日志打印
@@ -18,11 +18,14 @@ import com.yunxi.common.tracer.constants.TracerConstants;
  */
 public abstract class RollingFileAppender implements TracerAppender {
 
-    /** 日志刷新间隔，buffer时间超过间隔，则把缓存的日志数据刷新出去 */
-    public static final long       FLUSH_INTERVAL = TimeUnit.SECONDS.toMillis(1);
+    /** 默认日志刷新间隔：1s */
+    public static final long       DEFAULT_INTERVAL = TimeUnit.SECONDS.toMillis(1);
 
-    /** 默认输出缓冲大小：8KB */
-    public static final int        DEFAULT_BUFFER = 8 * 1024;
+    /** 默认日志编码：utf-8 */
+    public static final Charset    DEFAULT_CHARSET  = StandardCharsets.UTF_8;
+
+    /** 默认缓冲大小：8KB */
+    public static final int        DEFAULT_BUFFER   = 8 * 1024;
 
     /** 日志文件名 */
     protected final String         fileName;
@@ -30,13 +33,13 @@ public abstract class RollingFileAppender implements TracerAppender {
     /** 日志缓冲大小 */
     protected final int            bufferSize;
 
-    protected long                 flushTime      = 0L;
+    protected long                 flushTime        = 0L;
 
-    protected BufferedOutputStream buffer         = null;
+    protected File                 logFile          = null;
 
-    protected File                 file           = null;
+    protected BufferedOutputStream buffer           = null;
 
-    protected final AtomicBoolean  isRolling      = new AtomicBoolean(false);
+    protected final AtomicBoolean  isRolling        = new AtomicBoolean(false);
 
     public RollingFileAppender(String fileName) {
         this(fileName, DEFAULT_BUFFER);
@@ -45,43 +48,32 @@ public abstract class RollingFileAppender implements TracerAppender {
     public RollingFileAppender(String fileName, int bufferSize) {
         this.fileName = fileName;
         this.bufferSize = bufferSize;
-        this.initialize();
+        this.setFile();
     }
 
-    /**
-     * 初始化日志文件
-     */
-    protected void initialize() {
+    protected void setFile() {
         try {
-            file = new File(fileName);
-            if (!file.exists()) {
-                File parentFile = file.getParentFile();
-                if (!parentFile.exists()) {
-                    if (!parentFile.mkdirs()) {
-                        // TODO Error LOG
-                        return;
-                    }
+            this.logFile = new File(fileName);
+            if (!logFile.exists()) {
+                File parentFile = logFile.getParentFile();
+                if (!parentFile.exists() && !parentFile.mkdirs()) {
+                    // TODO LOG
+                    return;
                 }
-                if (!file.createNewFile()) {
-                    // TODO Error LOG
+                if (!logFile.createNewFile()) {
+                    // TODO LOG
                     return;
                 }
             }
-
-            if (!file.isFile()) {
-                // TODO Error LOG
+            if (!logFile.isFile() || !logFile.canWrite()) {
+                // TODO LOG
                 return;
             }
-
-            if (!file.canWrite()) {
-                // TODO Error LOG
-                return;
-            }
-
-            OutputStream os = new FileOutputStream(file, true);
+            OutputStream os = new FileOutputStream(logFile, true);
             buffer = new BufferedOutputStream(os, bufferSize);
-        } catch (Throwable t) {
-            // TODO Error LOG
+        } catch (Throwable e) {
+            // ignore
+            e.printStackTrace();
         }
     }
 
@@ -108,7 +100,7 @@ public abstract class RollingFileAppender implements TracerAppender {
                 try {
                     rollOver();
                     long current = System.currentTimeMillis();
-                    flushTime = current + FLUSH_INTERVAL;
+                    flushTime = current + DEFAULT_INTERVAL;
                 } finally {
                     isRolling.set(false);
                 }
@@ -117,11 +109,11 @@ public abstract class RollingFileAppender implements TracerAppender {
                 long current = System.currentTimeMillis();
                 if (current >= flushTime) {
                     buffer.flush();
-                    flushTime = current + FLUSH_INTERVAL;
+                    flushTime = current + DEFAULT_INTERVAL;
                 }
             }
 
-            buffer.write(log.getBytes(TracerConstants.DEFAULT_CHARSET));
+            buffer.write(log.getBytes(DEFAULT_CHARSET));
         }
     }
 
@@ -133,19 +125,20 @@ public abstract class RollingFileAppender implements TracerAppender {
             try {
                 Thread.sleep(1L);
             } catch (Exception e) {
-                // TODO
+                // ignore
+                e.printStackTrace();
             }
         }
     }
 
     /**
-     * 进行日志滚动
-     */
-    protected abstract void rollOver();
-
-    /**
-     * 检查是否需要日志滚动
+     * 检查是否进行日志滚动
      * @return
      */
     protected abstract boolean checkRollOver();
+
+    /**
+     * 进行日志滚动
+     */
+    protected abstract void rollOver();
 }
