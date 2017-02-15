@@ -26,6 +26,7 @@ public class TraceIdGenerator {
                 IP_16 = getIP_16(ipAddress);
             }
         } catch (Throwable e) {
+            // ignore
         }
     }
 
@@ -86,6 +87,7 @@ public class TraceIdGenerator {
             }
             return null;
         } catch (Throwable t) {
+            // ignore
             return null;
         }
     }
