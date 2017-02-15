@@ -21,27 +21,27 @@ import com.yunxi.common.tracer.daemon.TracerClear;
  * @version $Id: TimedRollingFileAppender.java, v 0.1 2017年1月10日 下午3:08:41 leukony Exp $
  */
 public class TimedRollingFileAppender extends RollingFileAppender {
-    
-    public static final String DAILY_ROLLING_PATTERN   = "'.'yyyy-MM-dd";
-    public static final String HOURLY_ROLLING_PATTERN  = "'.'yyyy-MM-dd_HH";
-    public static final int    DEFAULT_RESERVE_DAY     = 7;
-    
+
+    public static final String DAILY_ROLLING_PATTERN  = "'.'yyyy-MM-dd";
+    public static final String HOURLY_ROLLING_PATTERN = "'.'yyyy-MM-dd_HH";
+    public static final int    DEFAULT_RESERVE_DAY    = 7;
+
     // The code assumes that the following constants are in a increasing
     // sequence.
-    static final int TOP_OF_TROUBLE=-1;
-    static final int TOP_OF_SECONDS= 0;
-    static final int TOP_OF_MINUTE = 1;
-    static final int TOP_OF_HOUR   = 2;
-    static final int HALF_DAY      = 3;
-    static final int TOP_OF_DAY    = 4;
-    static final int TOP_OF_WEEK   = 5;
-    static final int TOP_OF_MONTH  = 6;
+    static final int           TOP_OF_TROUBLE         = -1;
+    static final int           TOP_OF_SECONDS         = 0;
+    static final int           TOP_OF_MINUTE          = 1;
+    static final int           TOP_OF_HOUR            = 2;
+    static final int           HALF_DAY               = 3;
+    static final int           TOP_OF_DAY             = 4;
+    static final int           TOP_OF_WEEK            = 5;
+    static final int           TOP_OF_MONTH           = 6;
 
     /**
        The date pattern. By default, the pattern is set to
        "'.'yyyy-MM-dd" meaning daily rollover.
      */
-    private String datePattern = DAILY_ROLLING_PATTERN;
+    private String             datePattern            = DAILY_ROLLING_PATTERN;
 
     /**
        The log file will be renamed to the value of the
@@ -53,24 +53,23 @@ public class TimedRollingFileAppender extends RollingFileAppender {
        The precise time when a rollover occurs depends on logging
        activity. 
     */
-    private String scheduledFilename;
+    private String             scheduledFilename;
 
-    /**
-       The next time we estimate a rollover should occur. */
-    private long nextCheck = System.currentTimeMillis () - 1;
+    /** The next time we estimate a rollover should occur. */
+    private long               nextCheck              = System.currentTimeMillis() - 1;
 
-    Date now = new Date();
+    Date                       now                    = new Date();
 
-    SimpleDateFormat sdf;
+    SimpleDateFormat           sdf;
 
-    RollingCalendar rc = new RollingCalendar();
+    RollingCalendar            rc                     = new RollingCalendar();
 
-    int checkPeriod = TOP_OF_TROUBLE;
-    
-    int logReserve = DEFAULT_RESERVE_DAY;
+    int                        checkPeriod            = TOP_OF_TROUBLE;
+
+    int                        logReserve             = DEFAULT_RESERVE_DAY;
 
     // The gmtTimeZone is used only in computeCheckPeriod() method.
-    static final TimeZone gmtTimeZone = TimeZone.getTimeZone("GMT");
+    static final TimeZone      gmtTimeZone            = TimeZone.getTimeZone("GMT");
 
     public TimedRollingFileAppender(String fileName) {
         this(fileName, DAILY_ROLLING_PATTERN, DEFAULT_RESERVE_DAY);
@@ -80,28 +79,26 @@ public class TimedRollingFileAppender extends RollingFileAppender {
         this(fileName, datePattern, DEFAULT_BUFFER, logReserve);
     }
 
-    public TimedRollingFileAppender(String fileName, String datePattern, int bufferSize, int logReserve) {
+    public TimedRollingFileAppender(String fileName, String datePattern, int bufferSize,
+                                    int logReserve) {
         super(fileName, bufferSize);
         this.datePattern = datePattern;
         this.logReserve = logReserve;
         activateOptions();
-        
-        TracerClear.watch(this);
     }
-    
+
     public void activateOptions() {
         if (datePattern != null && fileName != null) {
             now.setTime(System.currentTimeMillis());
             sdf = new SimpleDateFormat(datePattern);
-            int type = computeCheckPeriod();
-            rc.setType(type);
-            File file = new File(fileName);
-            scheduledFilename = fileName + sdf.format(new Date(file.lastModified()));
+            rc.setType(computeCheckPeriod());
+            scheduledFilename = fileName + sdf.format(new Date(logFile.lastModified()));
+            TracerClear.watch(this);
         } else {
             // TODO LOG
         }
     }
-    
+
     /** 
      * @see com.yunxi.common.tracer.appender.RollingFileAppender#checkRollOver()
      */
@@ -124,7 +121,7 @@ public class TimedRollingFileAppender extends RollingFileAppender {
         /* Compute filename, but only if datePattern is specified */
         if (datePattern == null) {
             System.err.println("没有设置滚动的模式");
-          return;
+            return;
         }
 
         String datedFilename = fileName + sdf.format(now);
@@ -132,9 +129,9 @@ public class TimedRollingFileAppender extends RollingFileAppender {
         // bounds of the current interval. Rollover will occur once the
         // next interval is reached.
         if (scheduledFilename.equals(datedFilename)) {
-          return;
+            return;
         }
-        
+
         if (this.buffer != null) {
             try {
                 this.buffer.close();
@@ -142,7 +139,7 @@ public class TimedRollingFileAppender extends RollingFileAppender {
                 if (e instanceof InterruptedIOException) {
                     Thread.currentThread().interrupt();
                 }
-                System.err.println("关闭输出流失败" + e.getMessage());
+                System.out.println("关闭输出流失败" + e.getMessage());
             }
         }
 
@@ -151,12 +148,14 @@ public class TimedRollingFileAppender extends RollingFileAppender {
             target.delete();
         }
 
-        if (!logFile.renameTo(target)) {
+        if (logFile.renameTo(target)) {
+            System.out.println("成功将文件名：" + fileName + " -> " + scheduledFilename);
+        } else {
             System.err.println("无法将文件名：" + fileName + " -> " + scheduledFilename);
         }
 
         this.setFile();
-        
+
         scheduledFilename = datedFilename;
     }
 
@@ -167,27 +166,27 @@ public class TimedRollingFileAppender extends RollingFileAppender {
     public void clear() {
         try {
             File parentDirectory = logFile.getParentFile();
-            
+
             if (parentDirectory == null || !parentDirectory.isDirectory()) {
                 return;
             }
-            
+
             final String baseName = logFile.getName();
-            
+
             if (baseName == null || baseName.trim().length() == 0) {
                 return;
             }
 
             File[] logFiles = parentDirectory.listFiles(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
-                    return name != null && name.trim().length() != 0 && name.startsWith(baseName);
+                    return name != null && name.startsWith(baseName);
                 }
             });
 
             if (logFiles == null || logFiles.length == 0) {
                 return;
             }
-            
+
             for (File logFile : logFiles) {
                 String logFileName = logFile.getName();
 
@@ -250,7 +249,7 @@ public class TimedRollingFileAppender extends RollingFileAppender {
             // TODO log
         }
     }
-    
+
     // This method computes the roll over period by looping over the
     // periods, starting with the shortest, and stopping when the r0 is
     // different from from r1, where r0 is the epoch formatted according
@@ -271,14 +270,14 @@ public class TimedRollingFileAppender extends RollingFileAppender {
                 String r0 = simpleDateFormat.format(epoch);
                 rollingCalendar.setType(i);
                 Date next = new Date(rollingCalendar.getNextCheckMillis(epoch));
-                String r1 =  simpleDateFormat.format(next);
+                String r1 = simpleDateFormat.format(next);
                 //System.out.println("Type = "+i+", r0 = "+r0+", r1 = "+r1);
                 if (r0 != null && r1 != null && !r0.equals(r1)) {
                     return i;
                 }
             }
         }
-        return TOP_OF_TROUBLE; 
+        return TOP_OF_TROUBLE;
     }
 }
 
@@ -290,8 +289,8 @@ public class TimedRollingFileAppender extends RollingFileAppender {
 class RollingCalendar extends GregorianCalendar {
 
     private static final long serialVersionUID = -6610354456347143893L;
-    
-    int type = TimedRollingFileAppender.TOP_OF_TROUBLE;
+
+    int                       type             = TimedRollingFileAppender.TOP_OF_TROUBLE;
 
     RollingCalendar() {
         super();
