@@ -1,11 +1,9 @@
 package com.yunxi.common.lang.util;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * 日期工具类
@@ -28,8 +26,6 @@ public class DateUtils {
 
     public static final long     ONE_DAY_MILSEC              = 24 * 60 * 60 * 1000;
 
-    public static final TimeZone DEFAULT_TIMEZONE            = TimeZone.getTimeZone("GMT");
-
     /**
      * 将字符串转换成日期
      * <p>默认使用"yyyy-MM-dd"转换</p>
@@ -50,10 +46,7 @@ public class DateUtils {
      */
     public static Date parse(String dateStr, String pattern) {
         try {
-            DateFormat format = new SimpleDateFormat(pattern);
-            // 所有的日期格式化必须在"GMT"时区进行
-            format.setTimeZone(DEFAULT_TIMEZONE);
-            return format.parse(dateStr);
+            return new SimpleDateFormat(pattern).parse(dateStr);
         } catch (ParseException e) {
             return null;
         }
@@ -96,10 +89,7 @@ public class DateUtils {
      * @return
      */
     public static String format(Date date, String pattern) {
-        DateFormat format = new SimpleDateFormat(pattern);
-        // 所有的日期格式化必须在"GMT"时区进行
-        format.setTimeZone(DEFAULT_TIMEZONE);
-        return format.format(date);
+        return new SimpleDateFormat(pattern).format(date);
     }
 
     /**

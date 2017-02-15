@@ -1,4 +1,4 @@
-package com.yunxi.common.monitor.service.http;
+package com.yunxi.common.rpc.http;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,11 +27,11 @@ import com.yunxi.common.tracer.tracer.HttpServiceTracer;
  * Http Server Tracer Filter
  * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
- * @version $Id: HttpTracerFilter.java, v 0.1 2017年1月12日 下午5:11:21 leukony Exp $
+ * @version $Id: HttpServerFilter.java, v 0.1 2017年1月12日 下午5:11:21 leukony Exp $
  */
-public class HttpTracerFilter implements Filter {
+public class HttpServerFilter implements Filter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpTracerFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpServerFilter.class);
     
     /** 应用名 */
     private String appName;
