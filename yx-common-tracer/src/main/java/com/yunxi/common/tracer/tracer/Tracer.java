@@ -43,10 +43,10 @@ public abstract class Tracer {
     }
 
     /**
-     * 获取日志根目录
+     * 生成日志目录
      * @return
      */
-    public String getLoggingRoot() {
-        return TRACR_LOGGING_ROOT;
+    protected String genLoggingPath(String fileName) {
+        return TRACR_LOGGING_ROOT + File.separator + fileName;
     }
 }

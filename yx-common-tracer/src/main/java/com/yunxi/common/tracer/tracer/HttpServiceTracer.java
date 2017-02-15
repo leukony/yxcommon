@@ -74,8 +74,9 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
             synchronized (this) {
                 if (httpClientAppender == null) {
                     TracerLogger logger = TracerLogger.HTTP_CLIENT_DIGEST;
-                    httpClientAppender = new TimedRollingFileAppender(logger.getFileName(),
-                        logger.getPattern(), logger.getReserve());
+                    httpClientAppender = new TimedRollingFileAppender(
+                        genLoggingPath(logger.getFileName()), logger.getPattern(),
+                        logger.getReserve());
                     tracerWriter.addAppender(clientTracerType, httpClientAppender,
                         new HttpServiceEncoder());
                 }
@@ -92,8 +93,9 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
             synchronized (this) {
                 if (httpServerAppender == null) {
                     TracerLogger logger = TracerLogger.HTTP_SERVER_DIGEST;
-                    httpServerAppender = new TimedRollingFileAppender(logger.getFileName(),
-                        logger.getPattern(), logger.getReserve());
+                    httpServerAppender = new TimedRollingFileAppender(
+                        genLoggingPath(logger.getFileName()), logger.getPattern(),
+                        logger.getReserve());
                     tracerWriter.addAppender(serverTracerType, httpServerAppender,
                         new HttpServiceEncoder());
                 }
