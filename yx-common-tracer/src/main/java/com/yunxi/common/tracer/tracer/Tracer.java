@@ -3,6 +3,7 @@ package com.yunxi.common.tracer.tracer;
 import java.io.File;
 
 import com.yunxi.common.tracer.daemon.TracerClear;
+import com.yunxi.common.tracer.util.TracerSelfLog;
 import com.yunxi.common.tracer.util.TracerUtils;
 
 /**
@@ -38,7 +39,7 @@ public abstract class Tracer {
         try {
             TracerClear.start();
         } catch (Exception e) {
-            // TODO Error LOG
+            TracerSelfLog.error("启动Trace日志清理守护线程失败", e);
         }
     }
 

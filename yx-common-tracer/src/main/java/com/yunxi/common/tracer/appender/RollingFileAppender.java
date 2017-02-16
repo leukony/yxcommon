@@ -57,16 +57,16 @@ public abstract class RollingFileAppender implements TracerAppender {
             if (!logFile.exists()) {
                 File parentFile = logFile.getParentFile();
                 if (!parentFile.exists() && !parentFile.mkdirs()) {
-                    // TODO LOG
+                    System.out.println("[Tracer] [创建文件目录失败：" + parentFile.getAbsolutePath() + "]");
                     return;
                 }
                 if (!logFile.createNewFile()) {
-                    // TODO LOG
+                    System.out.println("[Tracer] [创建日志文件失败：" + logFile.getAbsolutePath() + "]");
                     return;
                 }
             }
             if (!logFile.isFile() || !logFile.canWrite()) {
-                // TODO LOG
+                System.out.println("[Tracer] [日志文件异常：" + logFile.getAbsolutePath() + "]");
                 return;
             }
             OutputStream os = new FileOutputStream(logFile, true);

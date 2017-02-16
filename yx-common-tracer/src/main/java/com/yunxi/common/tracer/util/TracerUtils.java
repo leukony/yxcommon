@@ -16,6 +16,19 @@ import com.yunxi.common.tracer.context.TracerContext;
  */
 @SuppressWarnings("rawtypes")
 public class TracerUtils {
+    
+    /**
+     * 从上下文中获取TraceId
+     * @return
+     */
+    public static String getTraceId() {
+        TracerContext<?> context = TracerLocal.get();
+        if (context == null) {
+            return EMPTY;
+        }
+        String traceId = context.getTraceId();
+        return traceId == null ? EMPTY : traceId;
+    }
 
     /**
      * 克隆Tracer上下文

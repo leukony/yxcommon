@@ -5,6 +5,7 @@ import java.util.Map;
 import com.yunxi.common.tracer.TracerLocal;
 import com.yunxi.common.tracer.context.TracerContext;
 import com.yunxi.common.tracer.daemon.TracerWriter;
+import com.yunxi.common.tracer.util.TracerSelfLog;
 
 /**
  * 基于网络调用的Tracer的基类
@@ -49,7 +50,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
 
             return child;
         } catch (Throwable t) {
-            // TODO Trace自身异常处理
+            TracerSelfLog.errorWithTraceId("开始网络调用异常", t);
             return null;
         }
     }
@@ -76,7 +77,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
                 }
             }
         } catch (Throwable t) {
-            // TODO Trace自身异常处理
+            TracerSelfLog.errorWithTraceId("网络调用完毕异常", t);
         }
     }
 
@@ -98,7 +99,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
 
             return (T) ctx;
         } catch (Throwable t) {
-            // TODO Trace自身异常处理
+            TracerSelfLog.errorWithTraceId("开始处理网络调用异常", t);
             return null;
         }
     }
@@ -120,7 +121,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
                 tracerWriter.append(ctx);
             }
         } catch (Throwable t) {
-            // TODO Trace自身异常处理
+            TracerSelfLog.errorWithTraceId("网络调用处理完毕异常", t);
         } finally {
             clear();
         }

@@ -11,6 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.yunxi.common.tracer.appender.TracerAppender;
 import com.yunxi.common.tracer.context.TracerContext;
 import com.yunxi.common.tracer.encoder.TracerEncoder;
+import com.yunxi.common.tracer.util.TracerSelfLog;
 
 /**
  * 用来做异步的日志打印
@@ -54,16 +55,18 @@ public class TracerWriter {
         queueSize = 1 << (32 - Integer.numberOfLeadingZeros(queueSize - 1));
 
         this.queueSize = queueSize;
+        this.ctxs = new TracerContext[queueSize];
         this.indexMask = queueSize - 1;
         this.threshold = queueSize >= DEFAULT_THRESHOLD ? DEFAULT_THRESHOLD : queueSize;
-        this.ctxs = new TracerContext[queueSize];
-        this.lock = new ReentrantLock(false);
-        this.notEmpty = lock.newCondition();
 
         this.putIndex = new AtomicLong(0L);
         this.takeIndex = new AtomicLong(0L);
         this.discardCount = new AtomicLong(0L);
+
         this.isRunning = new AtomicBoolean(false);
+
+        this.lock = new ReentrantLock(false);
+        this.notEmpty = lock.newCondition();
 
         this.appenderMap = new HashMap<Character, TracerAppender>();
         this.encoderMap = new HashMap<Character, TracerEncoder>();
@@ -110,7 +113,7 @@ public class TracerWriter {
                     try {
                         notEmpty.signal();
                     } catch (Exception e) {
-                        // TODO error
+                        TracerSelfLog.error("唤醒异步打印日志线程失败", e);
                     } finally {
                         lock.unlock();
                     }
@@ -125,25 +128,21 @@ public class TracerWriter {
         @SuppressWarnings("unchecked")
         public void run() {
             final TracerWriter parent = TracerWriter.this;
-            final int queueSize = parent.queueSize;
             final int indexMask = parent.indexMask;
+            final int queueSize = parent.queueSize;
             final TracerContext[] ctxs = parent.ctxs;
             final ReentrantLock lock = parent.lock;
             final Condition notEmpty = parent.notEmpty;
-
             final AtomicLong putIndex = parent.putIndex;
             final AtomicLong takeIndex = parent.takeIndex;
             final AtomicLong discardCount = parent.discardCount;
             final AtomicBoolean isRunning = parent.isRunning;
-
             final Map<Character, TracerAppender> appenderMap = parent.appenderMap;
             final Map<Character, TracerEncoder> encoderMap = parent.encoderMap;
 
             // 输出丢弃的日志数
-            // final String workerName = parent.workerName;
-            //final long outputSpan = TimeUnit.MINUTES.toMillis(1);
-            //long lastOutputTime = System.currentTimeMillis();
-            //long now;
+            final long outputSpan = TimeUnit.MINUTES.toMillis(1);
+            long lastOutputTime = System.currentTimeMillis();
 
             while (true) {
                 try {
@@ -161,26 +160,25 @@ public class TracerWriter {
                                 ctx = ctxs[idx];
                             }
                             ctxs[idx] = null;
-                            --useSize;
-                            
                             // 单消费者，无需CAS
                             takeIndex.set(++take);
-                            
+                            --useSize;
+
                             TracerAppender appender = appenderMap.get(ctx.getTracerType());
                             TracerEncoder encoder = encoderMap.get(ctx.getTracerType());
                             encoder.encode(ctx, appender);
                         } while (useSize > 0);
 
-                        // TODO 输出丢掉的日志
-                        /*
+                        // 输出丢掉的日志
                         long discardNum = discardCount.get();
-                        if (discardNum > 0
-                            && (now = System.currentTimeMillis()) - lastOutputTime > outputSpan) {
+                        long now = System.currentTimeMillis();
+                        if ((discardNum > 0) && ((now - lastOutputTime) > outputSpan)) {
                             discardNum = discardCount.get();
                             discardCount.lazySet(0);
                             lastOutputTime = now;
+                            TracerSelfLog.warn("[" + Thread.currentThread().getName() + "] [丢失数量="
+                                               + discardNum + ", 队列大小=" + queueSize + "]");
                         }
-                        */
                     } else {
                         for (TracerAppender appender : appenderMap.values()) {
                             appender.flush();
@@ -195,10 +193,10 @@ public class TracerWriter {
                         }
                     }
                 } catch (InterruptedException e) {
-                    // TODO
+                    TracerSelfLog.warn("[" + Thread.currentThread().getName() + "] [线程被中断]");
                     break;
                 } catch (Exception e) {
-                    // TODO
+                    TracerSelfLog.error("[" + Thread.currentThread().getName() + "] [异步打印日志异常]", e);
                 }
             }
             isRunning.set(false);

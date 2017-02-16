@@ -95,7 +95,7 @@ public class TimedRollingFileAppender extends RollingFileAppender {
             scheduledFilename = fileName + sdf.format(new Date(logFile.lastModified()));
             TracerClear.watch(this);
         } else {
-            // TODO LOG
+            System.err.println("[Tracer] [参数错误：没有设置滚动的模式或者文件名为空]");
         }
     }
 
@@ -120,7 +120,7 @@ public class TimedRollingFileAppender extends RollingFileAppender {
     protected void rollOver() {
         /* Compute filename, but only if datePattern is specified */
         if (datePattern == null) {
-            System.err.println("没有设置滚动的模式");
+            System.err.println("[Tracer] [没有设置滚动的模式]");
             return;
         }
 
@@ -139,7 +139,7 @@ public class TimedRollingFileAppender extends RollingFileAppender {
                 if (e instanceof InterruptedIOException) {
                     Thread.currentThread().interrupt();
                 }
-                System.out.println("关闭输出流失败" + e.getMessage());
+                System.out.println("[Tracer] [关闭输出流失败：" + e.getMessage() + "]");
             }
         }
 
@@ -149,9 +149,9 @@ public class TimedRollingFileAppender extends RollingFileAppender {
         }
 
         if (logFile.renameTo(target)) {
-            System.out.println("成功将文件名：" + fileName + " -> " + scheduledFilename);
+            System.out.println("[Tracer] [成功将文件名：" + fileName + " -> " + scheduledFilename + "]");
         } else {
-            System.err.println("无法将文件名：" + fileName + " -> " + scheduledFilename);
+            System.err.println("[Tracer] [无法将文件名：" + fileName + " -> " + scheduledFilename + "]");
         }
 
         this.setFile();
@@ -211,7 +211,7 @@ public class TimedRollingFileAppender extends RollingFileAppender {
                     try {
                         date = hourlyRollingSdf.parse(logTime);
                     } catch (ParseException pe) {
-                        // TODO log
+                        System.out.println("[Tracer] [无法解析此日志文件后缀：" + logFileName + "]");
                     }
                 }
 
@@ -240,13 +240,13 @@ public class TimedRollingFileAppender extends RollingFileAppender {
                 }
 
                 if (logFile.delete() && !logFile.exists()) {
-                    // TODO log
+                    System.out.println("[Tracer] [清理日志文件成功：" + logFileName + "]");
                 } else {
-                    // TODO log
+                    System.err.println("[Tracer] [清理日志文件失败：" + logFileName + "]");
                 }
             }
         } catch (Throwable e) {
-            // TODO log
+            System.err.println("[Tracer] [清理日志文件异常：" + e.getMessage() + "]");
         }
     }
 

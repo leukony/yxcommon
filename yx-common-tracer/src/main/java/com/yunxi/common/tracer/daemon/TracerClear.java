@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.yunxi.common.tracer.appender.TracerAppender;
+import com.yunxi.common.tracer.util.TracerSelfLog;
 
 /**
  * 主要用于清理日志
@@ -28,7 +29,7 @@ public class TracerClear implements Runnable {
                 }
                 TimeUnit.SECONDS.sleep(interval);
             } catch (Throwable e) {
-                // TODO error
+                TracerSelfLog.error("Trace日志清理守护线程执行异常", e);
             }
         }
     }
