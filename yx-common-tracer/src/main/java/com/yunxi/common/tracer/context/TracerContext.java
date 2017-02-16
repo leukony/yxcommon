@@ -1,12 +1,17 @@
 package com.yunxi.common.tracer.context;
 
-import static com.yunxi.common.tracer.constants.TracerConstants.*;
+import static com.yunxi.common.tracer.constants.TracerConstants.RPC_ID;
+import static com.yunxi.common.tracer.constants.TracerConstants.TRACE_ID;
+import static com.yunxi.common.tracer.constants.TracerConstants.DOT;
+import static com.yunxi.common.tracer.constants.TracerConstants.RPC_ID_SEPARATOR;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.yunxi.common.tracer.constants.TracerConstants;
+import com.yunxi.common.tracer.util.TracerSelfLog;
+import com.yunxi.common.tracer.util.TracerUtils;
 
 /**
  * Tracer日志上下文
@@ -16,6 +21,15 @@ import com.yunxi.common.tracer.constants.TracerConstants;
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class TracerContext<T extends TracerContext> {
+
+    /** Tracer上下文嵌套的最大深度 */
+    private static final int TRACE_MAX_LAYER = 100;
+
+    /**
+     * 默认实例
+     * @return 默认实例
+     */
+    public abstract T def();
 
     /**
      * 复制实例
@@ -44,6 +58,21 @@ public abstract class TracerContext<T extends TracerContext> {
         to.setChildRpcIdIndex(this.childRpcIdIndex);
         to.putAllTrace(this.traceContext);
         return to;
+    }
+
+    /**
+     * 返回自身作为下一个上下文的 parent
+     * @return
+     */
+    public T getThisAsParent() {
+        if (TracerUtils.countMatches(getRpcId(), DOT) + 1 > TRACE_MAX_LAYER) {
+            TracerSelfLog.errorWithTraceId("日志上下文嵌套过深，超过：" + TRACE_MAX_LAYER);
+            // 系统属性
+            // 业务属性
+            return def();
+        } else {
+            return (T) this;
+        }
     }
 
     /** 存放各种Trace的数据 */

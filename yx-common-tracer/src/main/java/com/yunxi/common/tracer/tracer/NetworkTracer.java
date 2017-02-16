@@ -143,8 +143,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
         // 公共属性
         child.setTraceId(parent.getTraceId());
         child.setRpcId(parent.nextChildRpcId());
-        // TODO
-        child.setParentContext(null);
+        child.setParentContext(parent.getThisAsParent());
         // 系统属性
         // 业务属性
     }

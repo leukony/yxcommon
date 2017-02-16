@@ -1,5 +1,7 @@
 package com.yunxi.common.tracer.context;
 
+import com.yunxi.common.tracer.constants.TracerConstants;
+
 /**
  * Http服务日志上下文
  * 
@@ -16,6 +18,17 @@ public class HttpServiceContext extends TracerContext<HttpServiceContext> {
     private long   requestSize;
     /** 响应的大小 */
     private long   responseSize;
+    
+    /** 
+     * @see com.yunxi.common.tracer.context.TracerContext#def()
+     */
+    @Override
+    public HttpServiceContext def() {
+        HttpServiceContext httpServiceContext = new HttpServiceContext();
+        httpServiceContext.setTraceId(getTraceId());
+        httpServiceContext.setRpcId(TracerConstants.RPC_ID_ROOT);
+        return httpServiceContext;
+    }
 
     /** 
      * @see com.yunxi.common.tracer.context.TracerContext#clone()

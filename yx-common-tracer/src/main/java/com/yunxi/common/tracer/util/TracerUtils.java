@@ -23,11 +23,36 @@ public class TracerUtils {
      */
     public static String getTraceId() {
         TracerContext<?> context = TracerLocal.get();
+        
         if (context == null) {
             return EMPTY;
         }
+        
         String traceId = context.getTraceId();
+        
         return traceId == null ? EMPTY : traceId;
+    }
+    
+    /**
+     * 计算匹配字符出现次数
+     * @param str
+     * @param c
+     * @return
+     */
+    public static int countMatches(String str, char c) {
+        if (str == null || str.length() == 0) {
+            return 0;
+        }
+
+        int count = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == c) {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     /**

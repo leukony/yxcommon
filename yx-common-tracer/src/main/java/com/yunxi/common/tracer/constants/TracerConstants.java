@@ -22,6 +22,7 @@ public class TracerConstants {
     public static final String EMPTY               = "";
     public static final String NEWLINE             = "\r\n";
 
+    public static final char   DOT                 = '.';
     public static final char   COMMA               = ',';
     public static final char   AND                 = '&';
     public static final char   EQUAL               = '=';
