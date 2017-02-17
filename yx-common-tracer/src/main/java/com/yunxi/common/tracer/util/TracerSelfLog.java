@@ -2,12 +2,14 @@ package com.yunxi.common.tracer.util;
 
 import static com.yunxi.common.tracer.constants.TracerConstants.NEWLINE;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import com.yunxi.common.lang.util.DateUtils;
 import com.yunxi.common.tracer.appender.TimedRollingFileAppender;
 import com.yunxi.common.tracer.appender.TracerAppender;
+import com.yunxi.common.tracer.tracer.Tracer;
 
 /**
  * Tracer自身的Log处理
@@ -26,7 +28,8 @@ public class TracerSelfLog {
     private static TracerAppender tracerAppender;
 
     static {
-        tracerAppender = new TimedRollingFileAppender(SELF_LOG,
+        String selfPath = Tracer.TRACR_LOGGING_ROOT + File.separator + SELF_LOG;
+        tracerAppender = new TimedRollingFileAppender(selfPath,
             TimedRollingFileAppender.DAILY_ROLLING_PATTERN,
             TimedRollingFileAppender.DEFAULT_RESERVE_DAY);
     }
@@ -51,17 +54,17 @@ public class TracerSelfLog {
         try {
             StringWriter sw = new StringWriter(4096);
             PrintWriter pw = new PrintWriter(sw, false);
-            
+
             pw.append(timestamp());
             pw.append(ERROR_PREFIX);
             pw.append(log);
             pw.append(NEWLINE);
-            
+
             e.printStackTrace(pw);
-            
+
             pw.println();
             pw.flush();
-            
+
             tracerAppender.append(sw.toString());
         } catch (Throwable t) {
             t.printStackTrace();
@@ -76,7 +79,7 @@ public class TracerSelfLog {
         try {
             StringWriter sw = new StringWriter(4096);
             PrintWriter pw = new PrintWriter(sw, false);
-            
+
             pw.append(timestamp());
             pw.append(ERROR_PREFIX);
             pw.append("[");
@@ -84,12 +87,12 @@ public class TracerSelfLog {
             pw.append("]");
             pw.append(log);
             pw.append(NEWLINE);
-            
+
             e.printStackTrace(pw);
-            
+
             pw.println();
             pw.flush();
-            
+
             tracerAppender.append(sw.toString());
         } catch (Throwable t) {
             t.printStackTrace();
@@ -99,12 +102,12 @@ public class TracerSelfLog {
     private static void doLog(String log, String prefix) {
         try {
             StringBuilder sb = new StringBuilder();
-            
+
             sb.append(timestamp());
             sb.append(prefix);
             sb.append(log);
             sb.append(NEWLINE);
-            
+
             tracerAppender.append(sb.toString());
         } catch (Throwable t) {
             t.printStackTrace();

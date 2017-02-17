@@ -17,7 +17,7 @@ public abstract class Tracer {
     private static final String TRACE_LOGGINGROOT_KEY = "tracer.loggingroot";
     private static final String TRACE_APPENDPID_KEY   = "tracer.loggingroot.appendpid";
 
-    private static final String TRACR_LOGGING_ROOT;
+    public static final String TRACR_LOGGING_ROOT;
 
     static {
         // 获取Trace日志根目录，默认为"当前用户根目录/trace"
