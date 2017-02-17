@@ -14,10 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.yunxi.common.tracer.TracerFactory;
 import com.yunxi.common.tracer.constants.TracerConstants;
 import com.yunxi.common.tracer.context.HttpServiceContext;
@@ -31,8 +27,6 @@ import com.yunxi.common.tracer.tracer.HttpServiceTracer;
  */
 public class HttpServerFilter implements Filter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpServerFilter.class);
-    
     /** 应用名 */
     private String appName;
 
@@ -48,16 +42,9 @@ public class HttpServerFilter implements Filter {
         // 1、获取WEB请求中的Tracer参数
         String traceId = request.getHeader(TracerConstants.TRACE_ID);
         String rpcId = request.getHeader(TracerConstants.RPC_ID);
-        // 兼容不同平台存放Tracer参数的方式不一样
-        if (StringUtils.isBlank(traceId)) {
-            traceId = request.getParameter(TracerConstants.TRACE_ID);
-        }
-        if (StringUtils.isBlank(rpcId)) {
-            rpcId = request.getParameter(TracerConstants.RPC_ID);
-        }
 
         Map<String, String> tracerContext = null;
-        if (StringUtils.isNotBlank(traceId) && StringUtils.isNotBlank(rpcId)) {
+        if (traceId != null && traceId.length() > 0 && rpcId != null && rpcId.length() > 0) {
             tracerContext = new HashMap<String, String>();
             tracerContext.put(TracerConstants.TRACE_ID, traceId);
             tracerContext.put(TracerConstants.RPC_ID, rpcId);
@@ -67,7 +54,9 @@ public class HttpServerFilter implements Filter {
         HttpServiceTracer httpServiceTracer = TracerFactory.getHttpServerTracer();
 
         // 3、将请求中的Tracer参数设置到上下文中
-        httpServiceTracer.setContext(tracerContext);
+        if (tracerContext != null) {
+            httpServiceTracer.setContext(tracerContext);
+        }
 
         // 4. 开始处理WEB请求，调用startProcess
         HttpServiceContext httpServiceContext = httpServiceTracer.startProcess();
@@ -83,18 +72,9 @@ public class HttpServerFilter implements Filter {
 
         try {
             chain.doFilter(request, wrapper);
-
-            httpServiceContext.setResponseSize(wrapper.length);
-
-            httpServiceTracer.finishProcess(String.valueOf(wrapper.status));
         } finally {
-            if (httpServiceTracer != null) {
-                try {
-                    httpServiceTracer.clear();
-                } catch (Throwable e) {
-                    LOGGER.warn("清理WEB请求Tracer日志上下文异常", e);
-                }
-            }
+            httpServiceContext.setResponseSize(wrapper.length);
+            httpServiceTracer.finishProcess(String.valueOf(wrapper.status));
         }
     }
 
