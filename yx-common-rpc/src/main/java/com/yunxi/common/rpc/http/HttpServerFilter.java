@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import com.yunxi.common.lang.util.WebUtils;
 import com.yunxi.common.tracer.TracerFactory;
 import com.yunxi.common.tracer.constants.TracerConstants;
 import com.yunxi.common.tracer.context.HttpServiceContext;
@@ -63,7 +64,7 @@ public class HttpServerFilter implements Filter {
 
         // 5. 获取WEB请求参数并设置到Tracer上下文中
         HttpServletRequest httpReq = request;
-        httpServiceContext.setUrl(httpReq.getRequestURL().toString());
+        httpServiceContext.setUrl(WebUtils.getRequestURLWithParameters(httpReq));
         httpServiceContext.setRequestSize(httpReq.getContentLength());
         httpServiceContext.setMethod(httpReq.getMethod());
         httpServiceContext.setCurrentApp(appName);

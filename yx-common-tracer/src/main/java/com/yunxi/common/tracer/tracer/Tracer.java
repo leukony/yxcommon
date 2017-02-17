@@ -23,7 +23,7 @@ public abstract class Tracer {
         // 获取Trace日志根目录，默认为"当前用户根目录/trace"
         String loggingRoot = System.getProperty(TRACE_LOGGINGROOT_KEY);
         if (loggingRoot == null || loggingRoot.trim().length() == 0) {
-            loggingRoot = System.getProperty("user.home") + File.separator + "trace";
+            loggingRoot = System.getProperty("user.home") + File.separator + "tracer";
         }
 
         // 获取Trace日志根目录是否需要追加PID，解决单机多应用部署日志目录冲突
