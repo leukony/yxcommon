@@ -162,4 +162,12 @@
         <module>yx-common-rpc</module>
         <module>yx-common-monitor</module>
     </modules>
+    
+    <distributionManagement>
+    	<repository>
+    		<id>my-nexus-releases</id>
+			<name>Team Nexus Release Repository</name>
+			<url>http://10.0.32.13:8081/nexus/content/repositories/releases</url>    		
+    	</repository>
+    </distributionManagement>
 </project>
