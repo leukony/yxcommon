@@ -143,6 +143,7 @@ public class WebUtils {
     public static String getRequestParameters(HttpServletRequest request) {
         StringBuffer buffer = new StringBuffer();
         String inputCharset = request.getCharacterEncoding();
+        inputCharset = inputCharset == null ? "UTF-8" : inputCharset; 
         Enumeration<?> paramEnums = request.getParameterNames();
         while (paramEnums.hasMoreElements()) {
             String paramName = (String) paramEnums.nextElement();
