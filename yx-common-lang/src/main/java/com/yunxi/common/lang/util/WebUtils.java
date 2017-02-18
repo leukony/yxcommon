@@ -3,7 +3,9 @@ package com.yunxi.common.lang.util;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * WEB工具类
@@ -16,6 +18,49 @@ public class WebUtils {
     public static final String AND      = "&";
     public static final String EQUAL    = "=";
     public static final String QUESTION = "?";
+
+    /**
+     * 获取Cookie中变量的值
+     * @param request
+     * @param name
+     * @return
+     */
+    public static String getCookie(HttpServletRequest request, String name) {
+        if (name == null || name.trim().length() == 0) {
+            return null;
+        }
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null || cookies.length == 0) {
+            return null;
+        }
+
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 设置Cookie中变量的值
+     * @param response
+     * @param name
+     * @param value
+     * @param domain
+     * @param path
+     * @param maxAge
+     */
+    public static void setCookie(HttpServletResponse response, String name, String value,
+                                 String domain, String path, int maxAge) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setDomain(domain);
+        cookie.setPath(path);
+        cookie.setMaxAge(maxAge);
+        response.addCookie(cookie);
+    }
 
     /**
      * 获取Parameter中变量的值
@@ -31,13 +76,12 @@ public class WebUtils {
      * 获取Parameter中变量的值, 若为空，则返回默认
      * @param request
      * @param key
-     * @param defaultValue
+     * @param defValue
      * @return
      */
-    public static String getRequestParameter(HttpServletRequest request, String key,
-                                             String defaultValue) {
+    public static String getRequestParameter(HttpServletRequest request, String key, String defValue) {
         String value = getRequestParameter(request, key);
-        return value == null ? defaultValue : value;
+        return value == null ? defValue : value;
     }
 
     /**
@@ -54,13 +98,12 @@ public class WebUtils {
      * 获取Attribute中变量的值, 若为空，则返回默认
      * @param request
      * @param key
-     * @param defaultValue
+     * @param defValue
      * @return
      */
-    public static Object getRequestAttribute(HttpServletRequest request, String key,
-                                             Object defaultValue) {
+    public static Object getRequestAttribute(HttpServletRequest request, String key, Object defValue) {
         Object value = getRequestAttribute(request, key);
-        return value == null ? defaultValue : value;
+        return value == null ? defValue : value;
     }
 
     /**
@@ -89,13 +132,12 @@ public class WebUtils {
      * 获取Session中变量的值, 若为空，则返回默认
      * @param request
      * @param key
-     * @param defaultValue
+     * @param defValue
      * @return
      */
-    public static Object getSessionAttribute(HttpServletRequest request, String key,
-                                             Object defaultValue) {
+    public static Object getSessionAttribute(HttpServletRequest request, String key, Object defValue) {
         Object value = getSessionAttribute(request, key);
-        return value == null ? defaultValue : value;
+        return value == null ? defValue : value;
     }
 
     /**
@@ -143,7 +185,7 @@ public class WebUtils {
     public static String getRequestParameters(HttpServletRequest request) {
         StringBuffer buffer = new StringBuffer();
         String inputCharset = request.getCharacterEncoding();
-        inputCharset = inputCharset == null ? "UTF-8" : inputCharset; 
+        inputCharset = inputCharset == null ? "UTF-8" : inputCharset;
         Enumeration<?> paramEnums = request.getParameterNames();
         while (paramEnums.hasMoreElements()) {
             String paramName = (String) paramEnums.nextElement();

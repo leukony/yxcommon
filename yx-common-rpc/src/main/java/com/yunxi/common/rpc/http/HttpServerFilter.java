@@ -3,6 +3,8 @@ package com.yunxi.common.rpc.http;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -29,7 +31,10 @@ import com.yunxi.common.tracer.tracer.HttpServiceTracer;
 public class HttpServerFilter implements Filter {
 
     /** 应用名 */
-    private String appName;
+    private String    appName;
+
+    /** 忽略的URL */
+    private Pattern[] ignoreUri;
 
     /** 
      * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
@@ -40,7 +45,13 @@ public class HttpServerFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        // 1、获取WEB请求中的Tracer参数
+        // 1、判断是否为需要忽略的链接地址
+        if (isIgnoreRequestUri(request.getRequestURI())) {
+            chain.doFilter(request, response);
+            return;
+        }
+        
+        // 2、获取WEB请求中的Tracer参数
         String traceId = request.getHeader(TracerConstants.TRACE_ID);
         String rpcId = request.getHeader(TracerConstants.RPC_ID);
 
@@ -51,18 +62,18 @@ public class HttpServerFilter implements Filter {
             tracerContext.put(TracerConstants.RPC_ID, rpcId);
         }
 
-        // 2、从工厂中获取HttpServerTracer
+        // 3、从工厂中获取HttpServerTracer
         HttpServiceTracer httpServiceTracer = TracerFactory.getHttpServerTracer();
 
-        // 3、将请求中的Tracer参数设置到上下文中
+        // 4、将请求中的Tracer参数设置到上下文中
         if (tracerContext != null) {
             httpServiceTracer.setContext(tracerContext);
         }
 
-        // 4. 开始处理WEB请求，调用startProcess
+        // 5. 开始处理WEB请求，调用startProcess
         HttpServiceContext httpServiceContext = httpServiceTracer.startProcess();
 
-        // 5. 获取WEB请求参数并设置到Tracer上下文中
+        // 6. 获取WEB请求参数并设置到Tracer上下文中
         HttpServletRequest httpReq = request;
         httpServiceContext.setUrl(WebUtils.getRequestURLWithParameters(httpReq));
         httpServiceContext.setRequestSize(httpReq.getContentLength());
@@ -78,13 +89,42 @@ public class HttpServerFilter implements Filter {
             httpServiceTracer.finishProcess(String.valueOf(wrapper.status));
         }
     }
+    
+    /**
+     * 判断是否为需要忽略的链接地址
+     * @param requestUri
+     * @return
+     */
+    private boolean isIgnoreRequestUri(String requestUri) {
+        if (ignoreUri == null || ignoreUri.length == 0) {
+            return false;
+        }
+        
+        for (Pattern pattern : ignoreUri) {
+            Matcher matcher = pattern.matcher(requestUri);
+            if (matcher != null && matcher.matches()) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 
     /** 
      * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
      */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        appName = filterConfig.getInitParameter("appName");
+        this.appName = filterConfig.getInitParameter("appName");
+
+        String excludeUrl = filterConfig.getInitParameter("excludeUrl");
+        if (excludeUrl != null && excludeUrl.trim().length() > 0) {
+            String[] excludeUrlArray = excludeUrl.split(";");
+            this.ignoreUri = new Pattern[excludeUrlArray.length];
+            for (int i = 0; i < excludeUrlArray.length; i++) {
+                ignoreUri[i] = Pattern.compile(excludeUrlArray[i]);
+            }
+        }
     }
 
     /** 
