@@ -28,4 +28,19 @@ public enum TracerType {
     public char getType() {
         return type;
     }
+    
+    /**
+     * 根据类型获取TracerType
+     * @param type
+     * @return
+     */
+    public static TracerType getTracerType(char type) {
+        TracerType[] tracerTypes = TracerType.values();
+        for (TracerType tracerType : tracerTypes) {
+            if (type == tracerType.type) {
+                return tracerType;
+            }
+        }
+        return null;
+    }
 }
