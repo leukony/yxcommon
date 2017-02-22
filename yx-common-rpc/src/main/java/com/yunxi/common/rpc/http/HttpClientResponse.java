@@ -6,13 +6,22 @@ package com.yunxi.common.rpc.http;
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: HttpClientResponse.java, v 0.1 2017年1月12日 下午7:06:12 leukony Exp $
  */
-public class HttpClientResponse {
+public class HttpClientResponse<T> {
 
     /** 响应结果码 */
-    private int    code;
+    private int code;
 
     /** 响应结果体 */
-    private Object body;
+    private T   body;
+
+    /**
+     * @param code
+     * @param body
+     */
+    public HttpClientResponse(int code, T body) {
+        this.code = code;
+        this.body = body;
+    }
 
     /**
       * Getter method for property <tt>code</tt>.
@@ -37,7 +46,7 @@ public class HttpClientResponse {
       * 
       * @return property value of body
       */
-    public Object getBody() {
+    public T getBody() {
         return body;
     }
 
@@ -46,7 +55,7 @@ public class HttpClientResponse {
       * 
       * @param body value to be assigned to property body
       */
-    public void setBody(Object body) {
+    public void setBody(T body) {
         this.body = body;
     }
 }

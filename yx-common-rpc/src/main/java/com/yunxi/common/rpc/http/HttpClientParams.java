@@ -8,18 +8,23 @@ package com.yunxi.common.rpc.http;
  */
 public class HttpClientParams {
 
-    private int maxConnPerHost           = 6;
+    /** 默认连接数 */
+    private int    maxConnPerHost           = 6;
 
-    private int maxTotalConn             = 10;
+    /** 最大连接数 */
+    private int    maxTotalConn             = 10;
 
     /** 默认等待数据返回超时，单位:毫秒*/
-    private int soTimeout                = 10000;
+    private int    soTimeout                = 10000;
 
     /** 默认等待连接建立超时，单位:毫秒*/
-    private int connectionTimeout        = 1000;
+    private int    connectionTimeout        = 1000;
 
     /** 默认请求连接池连接超时,单位:毫秒*/
-    private int connectionManagerTimeout = 1000;
+    private int    connectionManagerTimeout = 1000;
+
+    /** 默认请求的编码 */
+    private String contentCharset           = "UTF-8";
 
     /**
       * Getter method for property <tt>maxConnPerHost</tt>.
@@ -109,5 +114,23 @@ public class HttpClientParams {
       */
     public void setConnectionManagerTimeout(int connectionManagerTimeout) {
         this.connectionManagerTimeout = connectionManagerTimeout;
+    }
+
+    /**
+      * Getter method for property <tt>contentCharset</tt>.
+      * 
+      * @return property value of contentCharset
+      */
+    public String getContentCharset() {
+        return contentCharset;
+    }
+
+    /**
+      * Setter method for property <tt>contentCharset</tt>.
+      * 
+      * @param contentCharset value to be assigned to property contentCharset
+      */
+    public void setContentCharset(String contentCharset) {
+        this.contentCharset = contentCharset;
     }
 }

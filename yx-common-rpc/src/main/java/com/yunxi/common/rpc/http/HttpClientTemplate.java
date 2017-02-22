@@ -1,5 +1,8 @@
 package com.yunxi.common.rpc.http;
 
+import static com.yunxi.common.tracer.constants.TracerConstants.RPC_ID;
+import static com.yunxi.common.tracer.constants.TracerConstants.TRACE_ID;
+
 import java.io.IOException;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -7,11 +10,10 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -19,7 +21,6 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 
 import com.yunxi.common.tracer.TracerFactory;
-import com.yunxi.common.tracer.constants.TracerConstants;
 import com.yunxi.common.tracer.context.HttpServiceContext;
 import com.yunxi.common.tracer.tracer.HttpServiceTracer;
 
@@ -36,145 +37,134 @@ import com.yunxi.common.tracer.tracer.HttpServiceTracer;
  * <p>
  * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
- * @version $Id: HttpClientTemplate.java, v 0.1 2017年1月12日 上午9:25:11 leukony Exp $
+ * @version $Id: HttpClientTemplate.java, v 0.1 2017年2月22日 上午10:38:08 leukony Exp $
  */
 public class HttpClientTemplate {
 
-    private String           appName;
-    private HttpClient       httpClient;
-    private HttpClientParams httpClientParams;
+    /** 应用名 */
+    private String     appName;
+    /** HttpClient */
+    private HttpClient httpClient;
 
     /**
      * 以Get方式执行http请求
      * @param url
-     * @return ResponseBody
+     * @return
      * @throws IOException
      * @throws HttpException
      */
-    public String executeGet(final String url) throws IOException, HttpException {
-        return executeGet(url, null);
-    }
+    public HttpClientResponse<String> executeGet(String url) throws IOException, HttpException {
+        return executeGet(url, new HttpClientCallback<String>() {
 
-    /**
-     * 以Get方式执行http请求
-     * @param url
-     * @return ResponseBody
-     * @throws IOException
-     * @throws HttpException
-     */
-    public String executeGet(final String url, final HttpState state) throws IOException,
-                                                                     HttpException {
-        return executeWithState(new GetMethod(url), state);
-    }
-
-    /**
-     * 以Post方式执行http请求
-     * @param url
-     * @param params
-     * @param headerParams
-     * @return ResponseBody
-     * @throws IOException
-     * @throws HttpException
-     */
-    public String executePost(final String url, final NameValuePair[] params,
-                              final NameValuePair[] headerParams) throws IOException, HttpException {
-        return executePost(url, params, headerParams, null);
-    }
-
-    /**
-     * 以Post方式执行http请求
-     * @param url
-     * @param params
-     * @param headerParams
-     * @return ResponseBody
-     * @throws IOException
-     * @throws HttpException
-     */
-    public String executePost(final String url, final NameValuePair[] params,
-                              final NameValuePair[] headerParams, final HttpState httpState)
-                                                                                            throws IOException,
-                                                                                            HttpException {
-        PostMethod postMethod = new PostMethod(url);
-        for (int i = 0; null != headerParams && i < headerParams.length; i++) {
-            NameValuePair nameValuePair = headerParams[i];
-            postMethod.addRequestHeader(nameValuePair.getName(), nameValuePair.getValue());
-        }
-        postMethod.addParameters(params);
-        return executeWithState(postMethod, httpState);
-    }
-
-    /**
-     * 传入HttpMethod以执行http请求
-     * @param httpMethod
-     * @return ResponseBody
-     * @throws IOException
-     * @throws HttpException
-     */
-    public String execute(final HttpMethod httpMethod) throws IOException, HttpException {
-        return executeWithState(httpMethod, null);
-    }
-
-    /**
-     * 传入HttpMethod以执行http请求
-     * @param httpMethod
-     * @param httpState
-     * @return ResponseBody
-     * @throws IOException
-     * @throws HttpException
-     */
-    public String executeWithState(final HttpMethod httpMethod, final HttpState state)
-                                                                                      throws IOException,
-                                                                                      HttpException {
-        HttpClientResponse resp = execute(httpMethod, state, new HttpClientCallback<String>() {
-            public String process(HttpMethod method) throws IOException {
-                return method.getResponseBodyAsString();
+            @Override
+            protected String doConvert(HttpMethod httpMethod) throws IOException {
+                return httpMethod.getResponseBodyAsString();
             }
+
         });
+    }
 
-        return (String) resp.getBody();
+    /**
+     * 以Get方式执行http请求
+     * @param url
+     * @param callback
+     * @return
+     * @throws IOException
+     * @throws HttpException
+     */
+    public <T> HttpClientResponse<T> executeGet(String url, HttpClientCallback<T> callback)
+                                                                                           throws IOException,
+                                                                                           HttpException {
+        return execute(new GetMethod(url), callback);
+    }
+
+    /**
+     * 以Post方式执行http请求
+     * @param url
+     * @param headParams
+     * @param reqParams
+     * @return
+     * @throws IOException
+     * @throws HttpException
+     */
+    public HttpClientResponse<String> executePost(String url, NameValuePair[] headParams,
+                                                  NameValuePair[] reqParams) throws IOException,
+                                                                            HttpException {
+        return executePost(url, headParams, reqParams, new HttpClientCallback<String>() {
+
+            @Override
+            protected String doConvert(HttpMethod httpMethod) throws IOException {
+                return httpMethod.getResponseBodyAsString();
+            }
+
+        });
+    }
+
+    /**
+     * 以Post方式执行http请求
+     * @param url
+     * @param headParams
+     * @param reqParams
+     * @param callback
+     * @return
+     * @throws IOException
+     * @throws HttpException
+     */
+    public <T> HttpClientResponse<T> executePost(String url, NameValuePair[] headParams,
+                                                 NameValuePair[] reqParams,
+                                                 HttpClientCallback<T> callback)
+                                                                                throws IOException,
+                                                                                HttpException {
+        PostMethod postMethod = new PostMethod(url);
+
+        if (headParams != null && headParams.length > 0) {
+            for (NameValuePair headerParam : headParams) {
+                if (headerParam != null) {
+                    postMethod.addRequestHeader(headerParam.getName(), headerParam.getValue());
+                }
+            }
+        }
+
+        if (reqParams != null && reqParams.length > 0) {
+            for (NameValuePair reqParam : reqParams) {
+                if (reqParam != null) {
+                    postMethod.addParameter(reqParam.getName(), reqParam.getValue());
+                }
+            }
+        }
+
+        return execute(postMethod, callback);
     }
 
     /**
      * 使用HttpClientCallback处理HttpClient的响应
      * @param httpMethod
-     * @param httpClientCallback
-     * @return HttpClientResponse
+     * @param callback
+     * @return
      * @throws IOException
      * @throws HttpException
      */
-    public HttpClientResponse execute(final HttpMethod httpMethod,
-                                      final HttpClientCallback<?> httpClientCallback)
-                                                                                     throws IOException,
-                                                                                     HttpException {
-        return execute(httpMethod, null, httpClientCallback);
-    }
-
-    /**
-     * 使用HttpClientCallback处理HttpClient的响应
-     * @param httpMethod
-     * @param httpState 
-     * @param httpClientCallback
-     * @return HttpClientResponse
-     * @throws IOException
-     * @throws HttpException
-     */
-    public HttpClientResponse execute(final HttpMethod httpMethod, final HttpState httpState,
-                                      final HttpClientCallback<?> httpClientCallback)
-                                                                                     throws IOException,
-                                                                                     HttpException {
+    public <T> HttpClientResponse<T> execute(HttpMethod httpMethod, HttpClientCallback<T> callback)
+                                                                                                   throws IOException,
+                                                                                                   HttpException {
         String resultCode = "";
-        HttpServiceTracer httpServiceTracer = TracerFactory.getHttpClientTracer();
-        HttpServiceContext httpServiceContext = httpServiceTracer.startInvoke();
-        try {
-            if (httpServiceContext != null) {
-                httpMethod.setRequestHeader(TracerConstants.TRACE_ID,
-                    httpServiceContext.getTraceId());
-                httpMethod.setRequestHeader(TracerConstants.RPC_ID,
-                    httpServiceContext.getRpcId());
+        HttpServiceTracer httpServiceTracer = null;
 
-                httpServiceContext.setCurrentApp(appName);
+        try {
+            // 1、从工厂获取HttpServerTracer
+            httpServiceTracer = TracerFactory.getHttpServerTracer();
+
+            // 2、开始Http请求,调用startInvoke
+            HttpServiceContext httpServiceContext = httpServiceTracer.startInvoke();
+
+            // 3、将上下文中Tracer参数设置到请求头
+            if (httpServiceContext != null) {
+                httpMethod.setRequestHeader(TRACE_ID, httpServiceContext.getTraceId());
+                httpMethod.setRequestHeader(RPC_ID, httpServiceContext.getRpcId());
+
+                httpServiceContext.setUrl(httpMethod.getURI().getURI());
                 httpServiceContext.setMethod(httpMethod.getName());
-                httpServiceContext.setUrl(getHttpClientUrl(httpMethod));
+                httpServiceContext.setCurrentApp(appName);
 
                 if (httpMethod instanceof EntityEnclosingMethod) {
                     RequestEntity requestEntity = ((EntityEnclosingMethod) httpMethod)
@@ -185,61 +175,29 @@ public class HttpClientTemplate {
                 }
             }
 
-            int responseCode = httpClient.executeMethod(null, httpMethod, httpState);
+            // 4、开始Http请求,调用executeMethod
+            int httpCode = httpClient.executeMethod(httpMethod);
 
+            // 5、将Http请求结果设置到上下文中
             if (httpServiceContext != null) {
+                resultCode = String.valueOf(httpCode);
                 if (httpMethod instanceof HttpMethodBase) {
-                    httpServiceContext.setResponseSize(((HttpMethodBase) httpMethod)
-                        .getResponseContentLength());
+                    HttpMethodBase httpMethodBase = (HttpMethodBase) httpMethod;
+                    httpServiceContext.setResponseSize(httpMethodBase.getResponseContentLength());
                 }
-                resultCode = String.valueOf(responseCode);
             }
 
-            HttpClientResponse response = new HttpClientResponse();
-            response.setCode(responseCode);
-            response.setBody(httpClientCallback.process(httpMethod));
-            return response;
+            // 6、调用CallBack处理Http请求返回结果
+            return callback.process(httpMethod);
         } finally {
-            httpServiceTracer.finishInvoke(resultCode, HttpServiceContext.class);
+            // 7、结束Http请求调用，打印Trace日志
+            if (httpServiceTracer != null) {
+                httpServiceTracer.finishInvoke(resultCode, HttpServiceContext.class);
+            }
+
+            // 8、释放Http请求链接
             httpMethod.releaseConnection();
         }
-    }
-
-    /**
-     * 获取请求的URL
-     * @param httpMethod
-     * @return
-     * @throws URIException
-     */
-    private String getHttpClientUrl(HttpMethod httpMethod) throws URIException {
-        URI uri = httpMethod.getURI();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(uri.getScheme());
-        sb.append("://");
-        sb.append(uri.getHost());
-        sb.append(uri.getPort() != -1 ? ":" + uri.getPort() : "");
-        sb.append(uri.getPath());
-
-        return sb.toString();
-    }
-
-    /**
-     * 初始化
-     */
-    public void initialize() {
-        HttpConnectionManagerParams httpClientParam = new HttpConnectionManagerParams();
-        httpClientParam.setDefaultMaxConnectionsPerHost(httpClientParams.getMaxConnPerHost());
-        httpClientParam.setConnectionTimeout(httpClientParams.getConnectionTimeout());
-        httpClientParam.setMaxTotalConnections(httpClientParams.getMaxTotalConn());
-        httpClientParam.setSoTimeout(httpClientParams.getSoTimeout());
-
-        HttpConnectionManager httpClientManager = new MultiThreadedHttpConnectionManager();
-        httpClientManager.setParams(httpClientParam);
-
-        httpClient = new HttpClient(httpClientManager);
-        httpClient.getParams().setConnectionManagerTimeout(
-            httpClientParams.getConnectionManagerTimeout());
     }
 
     /**
@@ -251,13 +209,46 @@ public class HttpClientTemplate {
         this.appName = appName;
     }
 
+    /** HttpClient代理 */
+    private HttpClientProxy  httpClientProxy;
+    /** HttpClient参数 */
+    private HttpClientParams httpClientParams;
+
     /**
-      * Setter method for property <tt>httpClient</tt>.
+     * 初始化HttpClient
+     * @param params
+     */
+    public void initialize() {
+        HttpConnectionManagerParams httpConnectionManagerParams = new HttpConnectionManagerParams();
+        HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
+        httpConnectionManagerParams.setDefaultMaxConnectionsPerHost(httpClientParams
+            .getMaxConnPerHost());
+        httpConnectionManagerParams.setConnectionTimeout(httpClientParams.getConnectionTimeout());
+        httpConnectionManagerParams.setMaxTotalConnections(httpClientParams.getMaxTotalConn());
+        httpConnectionManagerParams.setSoTimeout(httpClientParams.getSoTimeout());
+        httpConnectionManager.setParams(httpConnectionManagerParams);
+        httpClient = new HttpClient(httpConnectionManager);
+        httpClient.getParams().setConnectionManagerTimeout(
+            httpClientParams.getConnectionManagerTimeout());
+        httpClient.getParams().setContentCharset(httpClientParams.getContentCharset());
+        if (httpClientProxy != null) {
+            httpClient.getHostConfiguration().setProxy(httpClientProxy.getProxyHost(),
+                httpClientProxy.getProxyPort());
+            if (httpClientProxy.getProxyUserName() != null) {
+                UsernamePasswordCredentials credential = new UsernamePasswordCredentials(
+                    httpClientProxy.getProxyUserName(), httpClientProxy.getProxyUserPassword());
+                httpClient.getState().setProxyCredentials(AuthScope.ANY, credential);
+            }
+        }
+    }
+
+    /**
+      * Setter method for property <tt>httpClientProxy</tt>.
       * 
-      * @param httpClient value to be assigned to property httpClient
+      * @param httpClientProxy value to be assigned to property httpClientProxy
       */
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
+    public void setHttpClientProxy(HttpClientProxy httpClientProxy) {
+        this.httpClientProxy = httpClientProxy;
     }
 
     /**

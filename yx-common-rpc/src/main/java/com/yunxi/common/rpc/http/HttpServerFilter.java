@@ -70,10 +70,10 @@ public class HttpServerFilter implements Filter {
             httpServiceTracer.setContext(tracerContext);
         }
 
-        // 5. 开始处理WEB请求，调用startProcess
+        // 5、开始处理WEB请求,调用startProcess
         HttpServiceContext httpServiceContext = httpServiceTracer.startProcess();
 
-        // 6. 获取WEB请求参数并设置到Tracer上下文中
+        // 6、获取WEB请求参数并设置到Tracer上下文中
         HttpServletRequest httpReq = request;
         httpServiceContext.setUrl(WebUtils.getRequestURLWithParameters(httpReq));
         httpServiceContext.setRequestSize(httpReq.getContentLength());
