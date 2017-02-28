@@ -12,7 +12,13 @@ public enum TracerType {
     HTTP_CLIENT('1'),
 
     /** HTTPServer日志 */
-    HTTP_SERVER('2'), ;
+    HTTP_SERVER('2'),
+    
+    /** RPCClient日志 */
+    RPC_CLIENT('3'),
+
+    /** RPCServer日志 */
+    RPC_SERVER('4'), ;
 
     private char type;
 

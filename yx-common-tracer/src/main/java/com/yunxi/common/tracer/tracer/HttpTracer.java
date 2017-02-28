@@ -8,9 +8,9 @@ import com.yunxi.common.tracer.appender.TracerAppender;
 import com.yunxi.common.tracer.constants.TracerConstants;
 import com.yunxi.common.tracer.constants.TracerLogger;
 import com.yunxi.common.tracer.constants.TracerType;
-import com.yunxi.common.tracer.context.HttpServiceContext;
+import com.yunxi.common.tracer.context.HttpContext;
 import com.yunxi.common.tracer.context.TracerContext;
-import com.yunxi.common.tracer.encoder.HttpServiceEncoder;
+import com.yunxi.common.tracer.encoder.HttpEncoder;
 import com.yunxi.common.tracer.util.TraceIdGenerator;
 
 /**
@@ -19,12 +19,12 @@ import com.yunxi.common.tracer.util.TraceIdGenerator;
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
  * @version $Id: HttpServiceTracer.java, v 0.1 2017年1月9日 下午3:31:30 leukony Exp $
  */
-public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
+public class HttpTracer extends NetworkTracer<HttpContext> {
 
     private volatile TracerAppender httpClientAppender;
     private volatile TracerAppender httpServerAppender;
 
-    public HttpServiceTracer() {
+    public HttpTracer() {
         clientTracerType = TracerType.HTTP_CLIENT.getType();
         serverTracerType = TracerType.HTTP_SERVER.getType();
     }
@@ -33,8 +33,8 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
      * @see com.yunxi.common.tracer.tracer.NetworkTracer#getDefaultContext()
      */
     @Override
-    protected HttpServiceContext getDefaultContext() {
-        HttpServiceContext httpServiceContext = new HttpServiceContext();
+    protected HttpContext getDefaultContext() {
+        HttpContext httpServiceContext = new HttpContext();
         httpServiceContext.setTraceId(TraceIdGenerator.generate());
         httpServiceContext.setRpcId(TracerConstants.RPC_ID_ROOT);
         return httpServiceContext;
@@ -45,8 +45,8 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
      */
     @Override
     @SuppressWarnings("rawtypes")
-    protected HttpServiceContext createChildContext(TracerContext parentCtx) {
-        HttpServiceContext httpServiceContext = new HttpServiceContext();
+    protected HttpContext createChildContext(TracerContext parentCtx) {
+        HttpContext httpServiceContext = new HttpContext();
         cloneTraceContext(parentCtx, httpServiceContext);
         return httpServiceContext;
     }
@@ -55,9 +55,9 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
      * @see com.yunxi.common.tracer.tracer.NetworkTracer#setContext(java.util.Map)
      */
     @Override
-    public HttpServiceContext setContext(Map<String, String> traceContext) {
+    public HttpContext setContext(Map<String, String> traceContext) {
         if (traceContext != null) {
-            HttpServiceContext httpServiceContext = new HttpServiceContext();
+            HttpContext httpServiceContext = new HttpContext();
             httpServiceContext.putAllTrace(traceContext);
             TracerLocal.set(httpServiceContext);
             return httpServiceContext;
@@ -78,7 +78,7 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
                         genLoggingPath(logger.getFileName()), logger.getPattern(),
                         logger.getReserve());
                     tracerWriter.addAppender(clientTracerType, httpClientAppender,
-                        new HttpServiceEncoder());
+                        new HttpEncoder());
                 }
             }
         }
@@ -97,7 +97,7 @@ public class HttpServiceTracer extends NetworkTracer<HttpServiceContext> {
                         genLoggingPath(logger.getFileName()), logger.getPattern(),
                         logger.getReserve());
                     tracerWriter.addAppender(serverTracerType, httpServerAppender,
-                        new HttpServiceEncoder());
+                        new HttpEncoder());
                 }
             }
         }

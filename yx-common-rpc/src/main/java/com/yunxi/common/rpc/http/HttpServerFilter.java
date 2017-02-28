@@ -19,8 +19,8 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import com.yunxi.common.lang.util.WebUtils;
 import com.yunxi.common.tracer.TracerFactory;
 import com.yunxi.common.tracer.constants.TracerConstants;
-import com.yunxi.common.tracer.context.HttpServiceContext;
-import com.yunxi.common.tracer.tracer.HttpServiceTracer;
+import com.yunxi.common.tracer.context.HttpContext;
+import com.yunxi.common.tracer.tracer.HttpTracer;
 
 /**
  * Http Server Tracer Filter
@@ -50,7 +50,7 @@ public class HttpServerFilter implements Filter {
             chain.doFilter(request, response);
             return;
         }
-        
+
         // 2、获取WEB请求中的Tracer参数
         String traceId = request.getHeader(TracerConstants.TRACE_ID);
         String rpcId = request.getHeader(TracerConstants.RPC_ID);
@@ -63,33 +63,33 @@ public class HttpServerFilter implements Filter {
         }
 
         // 3、从工厂中获取HttpServerTracer
-        HttpServiceTracer httpServiceTracer = TracerFactory.getHttpServerTracer();
+        HttpTracer httpTracer = TracerFactory.getHttpServerTracer();
 
         // 4、将请求中的Tracer参数设置到上下文中
         if (tracerContext != null) {
-            httpServiceTracer.setContext(tracerContext);
+            httpTracer.setContext(tracerContext);
         }
 
         // 5、开始处理WEB请求,调用startProcess
-        HttpServiceContext httpServiceContext = httpServiceTracer.startProcess();
+        HttpContext httpContext = httpTracer.startProcess();
 
         // 6、获取WEB请求参数并设置到Tracer上下文中
         HttpServletRequest httpReq = request;
-        httpServiceContext.setUrl(WebUtils.getRequestURLWithParameters(httpReq));
-        httpServiceContext.setRequestSize(httpReq.getContentLength());
-        httpServiceContext.setMethod(httpReq.getMethod());
-        httpServiceContext.setCurrentApp(appName);
+        httpContext.setUrl(WebUtils.getRequestURLWithParameters(httpReq));
+        httpContext.setRequestSize(httpReq.getContentLength());
+        httpContext.setMethod(httpReq.getMethod());
+        httpContext.setCurrentApp(appName);
 
         EnhanceResponseWrapper wrapper = new EnhanceResponseWrapper(response);
 
         try {
             chain.doFilter(request, wrapper);
         } finally {
-            httpServiceContext.setResponseSize(wrapper.length);
-            httpServiceTracer.finishProcess(String.valueOf(wrapper.status));
+            httpContext.setResponseSize(wrapper.length);
+            httpTracer.finishProcess(String.valueOf(wrapper.status));
         }
     }
-    
+
     /**
      * 判断是否为需要忽略的链接地址
      * @param requestUri
@@ -99,14 +99,14 @@ public class HttpServerFilter implements Filter {
         if (ignoreUri == null || ignoreUri.length == 0) {
             return false;
         }
-        
+
         for (Pattern pattern : ignoreUri) {
             Matcher matcher = pattern.matcher(requestUri);
             if (matcher != null && matcher.matches()) {
                 return true;
             }
         }
-        
+
         return false;
     }
 

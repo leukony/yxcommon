@@ -21,8 +21,8 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 
 import com.yunxi.common.tracer.TracerFactory;
-import com.yunxi.common.tracer.context.HttpServiceContext;
-import com.yunxi.common.tracer.tracer.HttpServiceTracer;
+import com.yunxi.common.tracer.context.HttpContext;
+import com.yunxi.common.tracer.tracer.HttpTracer;
 
 /**
  * HttpClient模板
@@ -148,29 +148,29 @@ public class HttpClientTemplate {
                                                                                                    throws IOException,
                                                                                                    HttpException {
         String resultCode = "";
-        HttpServiceTracer httpServiceTracer = null;
+        HttpTracer httpTracer = null;
 
         try {
             // 1、从工厂获取HttpServerTracer
-            httpServiceTracer = TracerFactory.getHttpServerTracer();
+            httpTracer = TracerFactory.getHttpServerTracer();
 
             // 2、开始Http请求,调用startInvoke
-            HttpServiceContext httpServiceContext = httpServiceTracer.startInvoke();
+            HttpContext httpContext = httpTracer.startInvoke();
 
             // 3、将上下文中Tracer参数设置到请求头
-            if (httpServiceContext != null) {
-                httpMethod.setRequestHeader(TRACE_ID, httpServiceContext.getTraceId());
-                httpMethod.setRequestHeader(RPC_ID, httpServiceContext.getRpcId());
+            if (httpContext != null) {
+                httpMethod.setRequestHeader(TRACE_ID, httpContext.getTraceId());
+                httpMethod.setRequestHeader(RPC_ID, httpContext.getRpcId());
 
-                httpServiceContext.setUrl(httpMethod.getURI().getURI());
-                httpServiceContext.setMethod(httpMethod.getName());
-                httpServiceContext.setCurrentApp(appName);
+                httpContext.setUrl(httpMethod.getURI().getURI());
+                httpContext.setMethod(httpMethod.getName());
+                httpContext.setCurrentApp(appName);
 
                 if (httpMethod instanceof EntityEnclosingMethod) {
                     RequestEntity requestEntity = ((EntityEnclosingMethod) httpMethod)
                         .getRequestEntity();
                     if (requestEntity != null) {
-                        httpServiceContext.setRequestSize(requestEntity.getContentLength());
+                        httpContext.setRequestSize(requestEntity.getContentLength());
                     }
                 }
             }
@@ -179,11 +179,11 @@ public class HttpClientTemplate {
             int httpCode = httpClient.executeMethod(httpMethod);
 
             // 5、将Http请求结果设置到上下文中
-            if (httpServiceContext != null) {
+            if (httpContext != null) {
                 resultCode = String.valueOf(httpCode);
                 if (httpMethod instanceof HttpMethodBase) {
                     HttpMethodBase httpMethodBase = (HttpMethodBase) httpMethod;
-                    httpServiceContext.setResponseSize(httpMethodBase.getResponseContentLength());
+                    httpContext.setResponseSize(httpMethodBase.getResponseContentLength());
                 }
             }
 
@@ -191,8 +191,8 @@ public class HttpClientTemplate {
             return callback.process(httpMethod);
         } finally {
             // 7、结束Http请求调用，打印Trace日志
-            if (httpServiceTracer != null) {
-                httpServiceTracer.finishInvoke(resultCode, HttpServiceContext.class);
+            if (httpTracer != null) {
+                httpTracer.finishInvoke(resultCode, HttpContext.class);
             }
 
             // 8、释放Http请求链接

@@ -1,6 +1,6 @@
 package com.yunxi.common.tracer;
 
-import com.yunxi.common.tracer.tracer.HttpServiceTracer;
+import com.yunxi.common.tracer.tracer.HttpTracer;
 
 /**
  * Tracer工厂
@@ -10,26 +10,26 @@ import com.yunxi.common.tracer.tracer.HttpServiceTracer;
  */
 public class TracerFactory {
 
-    private static volatile HttpServiceTracer httpClientTracer;
+    private static volatile HttpTracer httpClientTracer;
 
-    private static volatile HttpServiceTracer httpServerTracer;
+    private static volatile HttpTracer httpServerTracer;
 
-    public static HttpServiceTracer getHttpClientTracer() {
+    public static HttpTracer getHttpClientTracer() {
         if (httpClientTracer == null) {
             synchronized (TracerFactory.class) {
                 if (httpClientTracer == null) {
-                    httpClientTracer = new HttpServiceTracer();
+                    httpClientTracer = new HttpTracer();
                 }
             }
         }
         return httpClientTracer;
     }
 
-    public static HttpServiceTracer getHttpServerTracer() {
+    public static HttpTracer getHttpServerTracer() {
         if (httpServerTracer == null) {
             synchronized (TracerFactory.class) {
                 if (httpServerTracer == null) {
-                    httpServerTracer = new HttpServiceTracer();
+                    httpServerTracer = new HttpTracer();
                 }
             }
         }

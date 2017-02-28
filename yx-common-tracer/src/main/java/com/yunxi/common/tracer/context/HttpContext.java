@@ -6,9 +6,9 @@ import com.yunxi.common.tracer.constants.TracerConstants;
  * Http服务日志上下文
  * 
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
- * @version $Id: HttpServiceContext.java, v 0.1 2017年1月9日 下午3:32:03 leukony Exp $
+ * @version $Id: HttpContext.java, v 0.1 2017年1月9日 下午3:32:03 leukony Exp $
  */
-public class HttpServiceContext extends TracerContext<HttpServiceContext> {
+public class HttpContext extends TracerContext<HttpContext> {
 
     /** 请求的Url */
     private String url;
@@ -23,8 +23,8 @@ public class HttpServiceContext extends TracerContext<HttpServiceContext> {
      * @see com.yunxi.common.tracer.context.TracerContext#def()
      */
     @Override
-    public HttpServiceContext def() {
-        HttpServiceContext httpServiceContext = new HttpServiceContext();
+    public HttpContext def() {
+        HttpContext httpServiceContext = new HttpContext();
         httpServiceContext.setTraceId(getTraceId());
         httpServiceContext.setRpcId(TracerConstants.RPC_ID_ROOT);
         return httpServiceContext;
@@ -34,8 +34,8 @@ public class HttpServiceContext extends TracerContext<HttpServiceContext> {
      * @see com.yunxi.common.tracer.context.TracerContext#clone()
      */
     @Override
-    public HttpServiceContext clone() {
-        HttpServiceContext httpServiceContext = super.cloneTo(new HttpServiceContext());
+    public HttpContext clone() {
+        HttpContext httpServiceContext = super.cloneTo(new HttpContext());
         httpServiceContext.url = this.url;
         httpServiceContext.method = this.method;
         httpServiceContext.requestSize = this.requestSize;
