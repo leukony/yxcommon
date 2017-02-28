@@ -1,7 +1,5 @@
 package com.yunxi.common.rpc.result;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * 服务调用结果组装
  * 
@@ -39,7 +37,7 @@ public class ResultWrapper {
      * @throws IllegalArgumentException 如果参数<code>errCode</code>为<code>null</code>抛出该异常
      */
     public static <T extends Object> Result<T> failure(String errCode, String errMsg) {
-    	if (StringUtils.isBlank(errCode)) {
+    	if (errCode == null || errCode.trim().length() == 0) {
     		throw new IllegalArgumentException("errCode is null");
     	}
         Result<T> result = new Result<T>();
