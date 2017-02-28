@@ -24,10 +24,10 @@ public class HttpContext extends TracerContext<HttpContext> {
      */
     @Override
     public HttpContext def() {
-        HttpContext httpServiceContext = new HttpContext();
-        httpServiceContext.setTraceId(getTraceId());
-        httpServiceContext.setRpcId(TracerConstants.RPC_ID_ROOT);
-        return httpServiceContext;
+        HttpContext httpContext = new HttpContext();
+        httpContext.setTraceId(getTraceId());
+        httpContext.setRpcId(TracerConstants.RPC_ID_ROOT);
+        return httpContext;
     }
 
     /** 
@@ -35,12 +35,12 @@ public class HttpContext extends TracerContext<HttpContext> {
      */
     @Override
     public HttpContext clone() {
-        HttpContext httpServiceContext = super.cloneTo(new HttpContext());
-        httpServiceContext.url = this.url;
-        httpServiceContext.method = this.method;
-        httpServiceContext.requestSize = this.requestSize;
-        httpServiceContext.responseSize = this.responseSize;
-        return httpServiceContext;
+        HttpContext httpContext = super.cloneTo(new HttpContext());
+        httpContext.setUrl(getUrl());
+        httpContext.setMethod(getMethod());
+        httpContext.setRequestSize(getRequestSize());
+        httpContext.setResponseSize(getResponseSize());
+        return httpContext;
     }
 
     /** 

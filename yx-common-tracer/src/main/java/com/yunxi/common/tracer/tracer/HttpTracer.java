@@ -34,10 +34,10 @@ public class HttpTracer extends NetworkTracer<HttpContext> {
      */
     @Override
     protected HttpContext getDefaultContext() {
-        HttpContext httpServiceContext = new HttpContext();
-        httpServiceContext.setTraceId(TraceIdGenerator.generate());
-        httpServiceContext.setRpcId(TracerConstants.RPC_ID_ROOT);
-        return httpServiceContext;
+        HttpContext httpContext = new HttpContext();
+        httpContext.setTraceId(TraceIdGenerator.generate());
+        httpContext.setRpcId(TracerConstants.RPC_ID_ROOT);
+        return httpContext;
     }
 
     /** 
@@ -46,21 +46,21 @@ public class HttpTracer extends NetworkTracer<HttpContext> {
     @Override
     @SuppressWarnings("rawtypes")
     protected HttpContext createChildContext(TracerContext parentCtx) {
-        HttpContext httpServiceContext = new HttpContext();
-        cloneTraceContext(parentCtx, httpServiceContext);
-        return httpServiceContext;
+        HttpContext httpContext = new HttpContext();
+        cloneTraceContext(parentCtx, httpContext);
+        return httpContext;
     }
 
     /** 
      * @see com.yunxi.common.tracer.tracer.NetworkTracer#setContext(java.util.Map)
      */
     @Override
-    public HttpContext setContext(Map<String, String> traceContext) {
-        if (traceContext != null) {
-            HttpContext httpServiceContext = new HttpContext();
-            httpServiceContext.putAllTrace(traceContext);
-            TracerLocal.set(httpServiceContext);
-            return httpServiceContext;
+    public HttpContext setContext(Map<String, String> tracerContext) {
+        if (tracerContext != null) {
+            HttpContext httpContext = new HttpContext();
+            httpContext.putAllTrace(tracerContext);
+            TracerLocal.set(httpContext);
+            return httpContext;
         }
         return null;
     }
