@@ -62,7 +62,7 @@ public class HttpServerFilter implements Filter {
             tracerContext.put(TracerConstants.RPC_ID, rpcId);
         }
 
-        // 3、从工厂中获取HttpServerTracer
+        // 3、从工厂中获取HttpTracer
         HttpTracer httpTracer = TracerFactory.getHttpServerTracer();
 
         // 4、将请求中的Tracer参数设置到上下文中

@@ -1,6 +1,6 @@
 package com.yunxi.common.tracer.context;
 
-import com.yunxi.common.tracer.constants.RpcResultCode;
+import com.yunxi.common.tracer.constants.RpcCode;
 import com.yunxi.common.tracer.constants.TracerConstants;
 
 /**
@@ -18,7 +18,7 @@ public class RpcContext extends TracerContext<RpcContext> {
     /** RPC 的协议 , 如 dubbo、drpc */
     private String protocol;
     /** RPC 的类型, 如 sync、callback */
-    private String invokeType;
+    private String rpcType;
     /** 客户端地址*/
     private String callIP;
     /** 客户端应用名 */
@@ -52,7 +52,7 @@ public class RpcContext extends TracerContext<RpcContext> {
         rpcContext.setServiceName(getServiceName());
         rpcContext.setMethodName(getMethodName());
         rpcContext.setProtocol(getProtocol());
-        rpcContext.setInvokeType(getInvokeType());
+        rpcContext.setRpcType(getRpcType());
         rpcContext.setCallIP(getCallIP());
         rpcContext.setCallApp(getCallApp());
         rpcContext.setTargetIP(getTargetIP());
@@ -69,7 +69,7 @@ public class RpcContext extends TracerContext<RpcContext> {
     public boolean isSuccess() {
         // 为空或者00的结果码算是成功的，其他算是失败的
         String code = super.getResultCode();
-        return code == null || code.length() == 0 || RpcResultCode.RPC_RESULT_SUCCESS.getCode().equals(code);
+        return code == null || code.length() == 0 || RpcCode.RPC_SUCCESS.getCode().equals(code);
     }
 
     /**
@@ -127,21 +127,21 @@ public class RpcContext extends TracerContext<RpcContext> {
     }
 
     /**
-      * Getter method for property <tt>invokeType</tt>.
+      * Getter method for property <tt>rpcType</tt>.
       * 
-      * @return property value of invokeType
+      * @return property value of rpcType
       */
-    public String getInvokeType() {
-        return invokeType;
+    public String getRpcType() {
+        return rpcType;
     }
-
+    
     /**
-      * Setter method for property <tt>invokeType</tt>.
+      * Setter method for property <tt>rpcType</tt>.
       * 
-      * @param invokeType value to be assigned to property invokeType
+      * @param rpcType value to be assigned to property rpcType
       */
-    public void setInvokeType(String invokeType) {
-        this.invokeType = invokeType;
+    public void setRpcType(String rpcType) {
+        this.rpcType = rpcType;
     }
 
     /**

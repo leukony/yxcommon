@@ -151,8 +151,8 @@ public class HttpClientTemplate {
         HttpTracer httpTracer = null;
 
         try {
-            // 1、从工厂获取HttpServerTracer
-            httpTracer = TracerFactory.getHttpServerTracer();
+            // 1、从工厂获取HttpTracer
+            httpTracer = TracerFactory.getHttpClientTracer();
 
             // 2、开始Http请求,调用startInvoke
             HttpContext httpContext = httpTracer.startInvoke();

@@ -9,9 +9,9 @@ package com.yunxi.common.tracer.constants;
 public class TracerConstants {
 
     /** TraceId 放在透传上下文中的 key */
-    public static final String TRACE_ID            = "traceId";
+    public static final String TRACE_ID            = "yxTraceId";
     /** RpcId 放在透传上下文中的 key */
-    public static final String RPC_ID              = "rpcId";
+    public static final String RPC_ID              = "yxRpcId";
     /** RpcId 根 */
     public static final String RPC_ID_ROOT         = "0";
     /** RpcId 分隔符 */
