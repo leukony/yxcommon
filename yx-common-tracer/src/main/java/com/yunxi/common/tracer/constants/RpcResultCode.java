@@ -14,11 +14,8 @@ public enum RpcResultCode {
     /** 业务失败 */
     RPC_RESULT_BIZ_FAILED("01"),
 
-    /** RPC逻辑失败 */
-    RPC_RESULT_RPC_FAILED("02"),
-
     /** 超时失败 */
-    RPC_RESULT_TIMEOUT_FAILED("03"), ;
+    RPC_RESULT_TIMEOUT_FAILED("02"), ;
 
     /** 结果码 */
     private String code;
