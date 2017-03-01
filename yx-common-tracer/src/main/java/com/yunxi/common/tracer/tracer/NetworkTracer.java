@@ -166,7 +166,7 @@ public abstract class NetworkTracer<T extends TracerContext> extends Tracer {
      * @param tracerContext
      * @return
      */
-    protected abstract T setContext(Map<String, String> tracerContext);
+    public abstract T setContext(Map<String, String> tracerContext);
 
     /**
      * 创建网络调用的Appender

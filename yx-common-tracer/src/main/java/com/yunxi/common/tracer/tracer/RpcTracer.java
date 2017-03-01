@@ -56,7 +56,7 @@ public class RpcTracer extends NetworkTracer<RpcContext> {
      * @see com.yunxi.common.tracer.tracer.NetworkTracer#setContext(java.util.Map)
      */
     @Override
-    protected RpcContext setContext(Map<String, String> tracerContext) {
+    public RpcContext setContext(Map<String, String> tracerContext) {
         if (tracerContext != null) {
             RpcContext rpcContext = new RpcContext();
             rpcContext.putAllTrace(tracerContext);
