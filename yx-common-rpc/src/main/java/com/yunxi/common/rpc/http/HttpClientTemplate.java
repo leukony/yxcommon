@@ -1,8 +1,5 @@
 package com.yunxi.common.rpc.http;
 
-import static com.yunxi.common.tracer.constants.TracerConstants.RPC_ID;
-import static com.yunxi.common.tracer.constants.TracerConstants.TRACE_ID;
-
 import java.io.IOException;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -12,6 +9,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
@@ -159,8 +157,17 @@ public class HttpClientTemplate {
 
             // 3、将上下文中Tracer参数设置到请求头
             if (httpContext != null) {
-                httpMethod.setRequestHeader(TRACE_ID, httpContext.getTraceId());
-                httpMethod.setRequestHeader(RPC_ID, httpContext.getRpcId());
+                if (httpMethod instanceof PostMethod) {
+                    ((PostMethod) httpMethod).addParameter("qid", httpContext.getTraceId());
+                } else if (httpMethod instanceof GetMethod) {
+                    String url = httpMethod.getURI().getURI();
+                    if (url.indexOf("?") != -1) {
+                        url = url + "&qid=" + httpContext.getTraceId();
+                    } else {
+                        url = url + "?qid=" + httpContext.getTraceId();
+                    }
+                    httpMethod.setURI(new URI(url, true, httpMethod.getParams().getUriCharset()));
+                }
 
                 httpContext.setUrl(httpMethod.getURI().getURI());
                 httpContext.setMethod(httpMethod.getName());

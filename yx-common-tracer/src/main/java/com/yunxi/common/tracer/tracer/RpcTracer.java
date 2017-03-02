@@ -10,8 +10,8 @@ import com.yunxi.common.tracer.constants.TracerLogger;
 import com.yunxi.common.tracer.constants.TracerType;
 import com.yunxi.common.tracer.context.RpcContext;
 import com.yunxi.common.tracer.context.TracerContext;
-import com.yunxi.common.tracer.encoder.RpcClientEncoder;
-import com.yunxi.common.tracer.encoder.RpcServerEncoder;
+import com.yunxi.common.tracer.encoder.HxRpcClientEncoder;
+import com.yunxi.common.tracer.encoder.HxRpcServerEncoder;
 import com.yunxi.common.tracer.util.TraceIdGenerator;
 
 /**
@@ -79,7 +79,7 @@ public class RpcTracer extends NetworkTracer<RpcContext> {
                         genLoggingPath(logger.getFileName()), logger.getPattern(),
                         logger.getReserve());
                     tracerWriter.addAppender(clientTracerType, rpcClientAppender,
-                        new RpcClientEncoder());
+                        new HxRpcClientEncoder());
                 }
             }
         }
@@ -98,7 +98,7 @@ public class RpcTracer extends NetworkTracer<RpcContext> {
                         genLoggingPath(logger.getFileName()), logger.getPattern(),
                         logger.getReserve());
                     tracerWriter.addAppender(serverTracerType, rpcServerAppender,
-                        new RpcServerEncoder());
+                        new HxRpcServerEncoder());
                 }
             }
         }
