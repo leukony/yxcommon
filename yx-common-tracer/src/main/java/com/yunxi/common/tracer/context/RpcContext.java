@@ -1,6 +1,6 @@
 package com.yunxi.common.tracer.context;
 
-import com.yunxi.common.tracer.constants.RpcCode;
+import com.yunxi.common.lang.enums.RpcCode;
 import com.yunxi.common.tracer.constants.TracerConstants;
 
 /**

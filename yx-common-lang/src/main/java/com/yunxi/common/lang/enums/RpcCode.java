@@ -1,4 +1,4 @@
-package com.yunxi.common.tracer.constants;
+package com.yunxi.common.lang.enums;
 
 /**
  * Rpc结果码
