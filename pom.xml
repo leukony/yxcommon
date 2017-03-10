@@ -27,6 +27,11 @@
                 <artifactId>yx-common-rpc</artifactId>
                 <version>${project.version}</version>
             </dependency>
+			<dependency>
+                <groupId>com.yunxi.common</groupId>
+                <artifactId>yx-common-executor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- ================================================= -->
             <!-- 3rd lib -->
@@ -46,7 +51,17 @@
 	            <artifactId>commons-httpclient</artifactId>
 	            <version>3.1</version>
 	        </dependency>
-	        <dependency>
+			<dependency>
+      			<groupId>commons-logging</groupId>
+      			<artifactId>commons-logging</artifactId>
+      			<version>1.0.4</version>
+    		</dependency>
+    		<dependency>
+      			<groupId>commons-codec</groupId>
+      			<artifactId>commons-codec</artifactId>
+      			<version>1.2</version>
+    		</dependency>
+    		<dependency>
 			  	<groupId>org.slf4j</groupId>
 			  	<artifactId>slf4j-log4j12</artifactId>
 			  	<version>1.7.6</version>
@@ -148,6 +163,7 @@
         <module>yx-common-lang</module>
         <module>yx-common-tracer</module>
         <module>yx-common-rpc</module>
+		<module>yx-common-executor</module>
     </modules>
     
     <distributionManagement>

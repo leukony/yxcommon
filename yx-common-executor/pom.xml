@@ -7,27 +7,14 @@
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.yunxi.common</groupId>
-	<artifactId>yx-common-rpc</artifactId>
+	<artifactId>yx-common-executor</artifactId>
 	<packaging>jar</packaging>
-	<name>yx-common-rpc</name>
+	<name>yx-common-executor</name>
 
 	<dependencies>
 		<dependency>
 		  	<groupId>com.yunxi.common</groupId>
 		  	<artifactId>yx-common-tracer</artifactId>
 		</dependency>
-		
-		<dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-        </dependency>
-        <dependency>
-   			<groupId>commons-logging</groupId>
-   			<artifactId>commons-logging</artifactId>
-   		</dependency>
-   		<dependency>
-   			<groupId>commons-codec</groupId>
-   			<artifactId>commons-codec</artifactId>
-   		</dependency>
 	</dependencies>
 </project>
