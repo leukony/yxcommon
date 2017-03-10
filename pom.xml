@@ -27,6 +27,11 @@
                 <artifactId>yx-common-rpc</artifactId>
                 <version>${project.version}</version>
             </dependency>
+			<dependency>
+                <groupId>com.yunxi.common</groupId>
+                <artifactId>yx-common-executor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- ================================================= -->
             <!-- 3rd lib -->
@@ -143,6 +148,7 @@
         <module>yx-common-lang</module>
         <module>yx-common-tracer</module>
         <module>yx-common-rpc</module>
+		<module>yx-common-executor</module>
     </modules>
     
     <distributionManagement>
