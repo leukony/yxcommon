@@ -4,6 +4,8 @@ import static com.yunxi.common.tracer.constants.TracerConstants.RPC_ID;
 import static com.yunxi.common.tracer.constants.TracerConstants.TRACE_ID;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -11,7 +13,6 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
@@ -41,8 +42,6 @@ import com.yunxi.common.tracer.tracer.HttpTracer;
  */
 public class HttpClientTemplate {
 
-    /** 应用名 */
-    private String     appName;
     /** HttpClient */
     private HttpClient httpClient;
 
@@ -87,9 +86,10 @@ public class HttpClientTemplate {
      * @throws IOException
      * @throws HttpException
      */
-    public HttpClientResponse<String> executePost(String url, NameValuePair[] headParams,
-                                                  NameValuePair[] reqParams) throws IOException,
-                                                                            HttpException {
+    public HttpClientResponse<String> executePost(String url, Map<String, String> headParams,
+                                                  Map<String, String> reqParams)
+                                                                                throws IOException,
+                                                                                HttpException {
         return executePost(url, headParams, reqParams, new HttpClientCallback<String>() {
 
             @Override
@@ -110,26 +110,22 @@ public class HttpClientTemplate {
      * @throws IOException
      * @throws HttpException
      */
-    public <T> HttpClientResponse<T> executePost(String url, NameValuePair[] headParams,
-                                                 NameValuePair[] reqParams,
+    public <T> HttpClientResponse<T> executePost(String url, Map<String, String> headParams,
+                                                 Map<String, String> reqParams,
                                                  HttpClientCallback<T> callback)
                                                                                 throws IOException,
                                                                                 HttpException {
         PostMethod postMethod = new PostMethod(url);
 
-        if (headParams != null && headParams.length > 0) {
-            for (NameValuePair headerParam : headParams) {
-                if (headerParam != null) {
-                    postMethod.addRequestHeader(headerParam.getName(), headerParam.getValue());
-                }
+        if (headParams != null && headParams.size() > 0) {
+            for (Entry<String, String> header : headParams.entrySet()) {
+                postMethod.addRequestHeader(header.getKey(), header.getValue());
             }
         }
 
-        if (reqParams != null && reqParams.length > 0) {
-            for (NameValuePair reqParam : reqParams) {
-                if (reqParam != null) {
-                    postMethod.addParameter(reqParam.getName(), reqParam.getValue());
-                }
+        if (reqParams != null && reqParams.size() > 0) {
+            for (Entry<String, String> req : reqParams.entrySet()) {
+                postMethod.addParameter(req.getKey(), req.getValue());
             }
         }
 
@@ -200,6 +196,72 @@ public class HttpClientTemplate {
         }
     }
 
+    /** 应用名 */
+    private String appName;
+
+    /** 默认连接数 */
+    private int    maxConnPerHost           = 6;
+
+    /** 最大连接数 */
+    private int    maxTotalConn             = 10;
+
+    /** 默认等待数据返回超时，单位:毫秒*/
+    private int    soTimeout                = 10000;
+
+    /** 默认等待连接建立超时，单位:毫秒*/
+    private int    connectionTimeout        = 1000;
+
+    /** 默认请求连接池连接超时,单位:毫秒*/
+    private int    connectionManagerTimeout = 1000;
+    
+    /** 默认请求的编码 */
+    private String contentCharset           = "UTF-8";
+
+    /** 代理Host */
+    private String proxyHost;
+
+    /** 代理端口 */
+    private int    proxyPort;
+
+    /** 代理用户名 */
+    private String proxyUserName;
+
+    /** 代理密码 */
+    private String proxyUserPassword;
+
+    /**
+     * 初始化HttpClient
+     * @param params
+     */
+    public void initialize() {
+        HttpConnectionManagerParams httpConnectionManagerParams = new HttpConnectionManagerParams();
+        HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
+        httpConnectionManagerParams.setDefaultMaxConnectionsPerHost(maxConnPerHost);
+        httpConnectionManagerParams.setConnectionTimeout(connectionTimeout);
+        httpConnectionManagerParams.setMaxTotalConnections(maxTotalConn);
+        httpConnectionManagerParams.setSoTimeout(soTimeout);
+        httpConnectionManager.setParams(httpConnectionManagerParams);
+        httpClient = new HttpClient(httpConnectionManager);
+        httpClient.getParams().setConnectionManagerTimeout(connectionManagerTimeout);
+        httpClient.getParams().setContentCharset(contentCharset);
+        if (proxyHost != null) {
+            httpClient.getHostConfiguration().setProxy(proxyHost, proxyPort);
+            if (proxyUserName != null) {
+                httpClient.getState().setProxyCredentials(AuthScope.ANY,
+                    new UsernamePasswordCredentials(proxyUserName, proxyUserPassword));
+            }
+        }
+    }
+
+    /**
+      * Setter method for property <tt>httpClient</tt>.
+      * 
+      * @param httpClient value to be assigned to property httpClient
+      */
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
     /**
       * Setter method for property <tt>appName</tt>.
       * 
@@ -209,54 +271,93 @@ public class HttpClientTemplate {
         this.appName = appName;
     }
 
-    /** HttpClient代理 */
-    private HttpClientProxy  httpClientProxy;
-    /** HttpClient参数 */
-    private HttpClientParams httpClientParams;
-
     /**
-     * 初始化HttpClient
-     * @param params
-     */
-    public void initialize() {
-        HttpConnectionManagerParams httpConnectionManagerParams = new HttpConnectionManagerParams();
-        HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
-        httpConnectionManagerParams.setDefaultMaxConnectionsPerHost(httpClientParams
-            .getMaxConnPerHost());
-        httpConnectionManagerParams.setConnectionTimeout(httpClientParams.getConnectionTimeout());
-        httpConnectionManagerParams.setMaxTotalConnections(httpClientParams.getMaxTotalConn());
-        httpConnectionManagerParams.setSoTimeout(httpClientParams.getSoTimeout());
-        httpConnectionManager.setParams(httpConnectionManagerParams);
-        httpClient = new HttpClient(httpConnectionManager);
-        httpClient.getParams().setConnectionManagerTimeout(
-            httpClientParams.getConnectionManagerTimeout());
-        httpClient.getParams().setContentCharset(httpClientParams.getContentCharset());
-        if (httpClientProxy != null) {
-            httpClient.getHostConfiguration().setProxy(httpClientProxy.getProxyHost(),
-                httpClientProxy.getProxyPort());
-            if (httpClientProxy.getProxyUserName() != null) {
-                UsernamePasswordCredentials credential = new UsernamePasswordCredentials(
-                    httpClientProxy.getProxyUserName(), httpClientProxy.getProxyUserPassword());
-                httpClient.getState().setProxyCredentials(AuthScope.ANY, credential);
-            }
-        }
+      * Setter method for property <tt>maxConnPerHost</tt>.
+      * 
+      * @param maxConnPerHost value to be assigned to property maxConnPerHost
+      */
+    public void setMaxConnPerHost(int maxConnPerHost) {
+        this.maxConnPerHost = maxConnPerHost;
     }
 
     /**
-      * Setter method for property <tt>httpClientProxy</tt>.
+      * Setter method for property <tt>maxTotalConn</tt>.
       * 
-      * @param httpClientProxy value to be assigned to property httpClientProxy
+      * @param maxTotalConn value to be assigned to property maxTotalConn
       */
-    public void setHttpClientProxy(HttpClientProxy httpClientProxy) {
-        this.httpClientProxy = httpClientProxy;
+    public void setMaxTotalConn(int maxTotalConn) {
+        this.maxTotalConn = maxTotalConn;
     }
 
     /**
-      * Setter method for property <tt>httpClientParams</tt>.
+      * Setter method for property <tt>soTimeout</tt>.
       * 
-      * @param httpClientParams value to be assigned to property httpClientParams
+      * @param soTimeout value to be assigned to property soTimeout
       */
-    public void setHttpClientParams(HttpClientParams httpClientParams) {
-        this.httpClientParams = httpClientParams;
+    public void setSoTimeout(int soTimeout) {
+        this.soTimeout = soTimeout;
+    }
+
+    /**
+      * Setter method for property <tt>connectionTimeout</tt>.
+      * 
+      * @param connectionTimeout value to be assigned to property connectionTimeout
+      */
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    /**
+      * Setter method for property <tt>connectionManagerTimeout</tt>.
+      * 
+      * @param connectionManagerTimeout value to be assigned to property connectionManagerTimeout
+      */
+    public void setConnectionManagerTimeout(int connectionManagerTimeout) {
+        this.connectionManagerTimeout = connectionManagerTimeout;
+    }
+
+    /**
+      * Setter method for property <tt>contentCharset</tt>.
+      * 
+      * @param contentCharset value to be assigned to property contentCharset
+      */
+    public void setContentCharset(String contentCharset) {
+        this.contentCharset = contentCharset;
+    }
+
+    /**
+      * Setter method for property <tt>proxyHost</tt>.
+      * 
+      * @param proxyHost value to be assigned to property proxyHost
+      */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    /**
+      * Setter method for property <tt>proxyPort</tt>.
+      * 
+      * @param proxyPort value to be assigned to property proxyPort
+      */
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    /**
+      * Setter method for property <tt>proxyUserName</tt>.
+      * 
+      * @param proxyUserName value to be assigned to property proxyUserName
+      */
+    public void setProxyUserName(String proxyUserName) {
+        this.proxyUserName = proxyUserName;
+    }
+
+    /**
+      * Setter method for property <tt>proxyUserPassword</tt>.
+      * 
+      * @param proxyUserPassword value to be assigned to property proxyUserPassword
+      */
+    public void setProxyUserPassword(String proxyUserPassword) {
+        this.proxyUserPassword = proxyUserPassword;
     }
 }
