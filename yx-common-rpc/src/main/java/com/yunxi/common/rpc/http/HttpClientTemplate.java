@@ -3,7 +3,11 @@ package com.yunxi.common.rpc.http;
 import static com.yunxi.common.tracer.constants.TracerConstants.RPC_ID;
 import static com.yunxi.common.tracer.constants.TracerConstants.TRACE_ID;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -57,7 +61,7 @@ public class HttpClientTemplate {
 
             @Override
             protected String doConvert(HttpMethod httpMethod) throws IOException {
-                return httpMethod.getResponseBodyAsString();
+                return getResponseBody(httpMethod);
             }
 
         });
@@ -94,7 +98,7 @@ public class HttpClientTemplate {
 
             @Override
             protected String doConvert(HttpMethod httpMethod) throws IOException {
-                return httpMethod.getResponseBodyAsString();
+                return getResponseBody(httpMethod);
             }
 
         });
@@ -194,6 +198,24 @@ public class HttpClientTemplate {
             // 8、释放Http请求链接
             httpMethod.releaseConnection();
         }
+    }
+    
+    /**
+     * 转化返回结果
+     * @param httpMethod
+     * @return
+     * @throws IOException 
+     */
+    private String getResponseBody(HttpMethod httpMethod) throws IOException {
+        InputStream is = httpMethod.getResponseBodyAsStream();
+        Reader r = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(r);
+        String result = "";
+        StringBuffer sb = new StringBuffer();  
+        while ((result = br.readLine())!= null) {  
+            sb.append(result); 
+        }
+        return sb.toString();
     }
 
     /** 应用名 */
