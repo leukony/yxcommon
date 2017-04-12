@@ -1,6 +1,8 @@
 package com.yunxi.common.lang.util;
 
+import java.net.InetAddress;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 import javax.servlet.http.Cookie;
@@ -208,5 +210,56 @@ public class WebUtils {
         }
 
         return null;
+    }
+    
+    /**
+     * 获取请求来源IP
+     * @param request
+     * @return
+     */
+    public static String getRequestIP(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+
+        if (ip != null && ip.indexOf(',') != -1) {
+            // 如果通过了多级反向代理的话，X-Forwarded-For的值并不止一个，而是一串 IP 值
+            // 取X-Forwarded-For中第一个非unknown的有效IP字符串
+            // 如：X-Forwarded-For：192.168.1.110, 192.168.1.120, 192.168.1.130, 192.168.1.100
+            // 用户真实IP为： 192.168.1.110 
+            // 注意:当访问地址为 localhost 时 地址格式为 0:0:0:0:0:0:1
+            String[] ips = ip.split(",");
+            for (int i = 0; i < ips.length; i++) {
+                if (ips[i] == null) {
+                    continue;
+                }
+                if ("unknown".equalsIgnoreCase(ips[i])) {
+                    continue;
+                }
+                ip = ips[i];
+            }
+        }
+        
+        if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:1".equals(ip)) {
+            try {
+                ip = InetAddress.getLocalHost().getHostAddress();
+            } catch (UnknownHostException e) {
+                // ignore
+            }
+        }
+        return ip;
     }
 }

@@ -13,12 +13,12 @@ import com.yunxi.common.tracer.context.HttpContext;
 import com.yunxi.common.tracer.util.TracerBuilder;
 
 /**
- * Http服务格式编码转换
+ * Http服务端服务格式编码转换
  *  
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
- * @version $Id: HxHttpEncoder.java, v 0.1 2017年1月11日 下午6:12:21 leukony Exp $
+ * @version $Id: HxHttpServerEncoder.java, v 0.1 2017年1月11日 下午6:12:21 leukony Exp $
  */
-public class HxHttpEncoder implements TracerEncoder<HttpContext> {
+public class HxHttpServerEncoder implements TracerEncoder<HttpContext> {
     
     /** 应用统计日志 */
     protected static final Logger LOGGER = LoggerFactory.getLogger("APP-STATS-LOGGER");
@@ -51,6 +51,7 @@ public class HxHttpEncoder implements TracerEncoder<HttpContext> {
           .appendRaw("\"success\":\"" + CommonYN.get(ctx.isSuccess()).name() + "\",")
           .appendRaw("\"used\":" + ctx.getUsedTime() + ",")
           .appendRaw("\"code\":\"" + ctx.getResultCode() + "\",")
+          .appendRaw("\"reqIp\":\"" + ctx.getRequestIp() + "\",")
           .appendEscapeRaw("\"thread\":\"" + ctx.getThreadName() + "\"")
           .appendRaw(SUFFIX_k)
           .appendRaw(SUFFIX_z);

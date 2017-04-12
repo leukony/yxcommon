@@ -9,13 +9,13 @@ import com.yunxi.common.tracer.context.HttpContext;
 import com.yunxi.common.tracer.util.TracerBuilder;
 
 /**
- * Http服务格式编码转换
+ * Http服务端服务格式编码转换
  * <p>非线程安全的</p>
  *  
  * @author <a href="mailto:leukony@yeah.net">leukony</a>
- * @version $Id: HttpServiceEncoder.java, v 0.1 2017年1月11日 下午6:12:21 leukony Exp $
+ * @version $Id: HttpServerEncoder.java, v 0.1 2017年1月11日 下午6:12:21 leukony Exp $
  */
-public class HttpEncoder implements TracerEncoder<HttpContext> {
+public class HttpServerEncoder implements TracerEncoder<HttpContext> {
     
     private TracerBuilder tb = new TracerBuilder();
 
@@ -33,6 +33,7 @@ public class HttpEncoder implements TracerEncoder<HttpContext> {
           .appendEscape(ctx.getThreadName())
           .append(CommonYN.get(ctx.isSuccess()).name())
           .append(ctx.getUsedTime())
+          .append(ctx.getRequestIp())
           .appendEscape(ctx.getUrl())
           .append(ctx.getMethod())
           .append(ctx.getResultCode())
