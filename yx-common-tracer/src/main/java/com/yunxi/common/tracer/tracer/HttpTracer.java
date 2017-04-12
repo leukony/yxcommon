@@ -10,7 +10,8 @@ import com.yunxi.common.tracer.constants.TracerLogger;
 import com.yunxi.common.tracer.constants.TracerType;
 import com.yunxi.common.tracer.context.HttpContext;
 import com.yunxi.common.tracer.context.TracerContext;
-import com.yunxi.common.tracer.encoder.HttpEncoder;
+import com.yunxi.common.tracer.encoder.HttpClientEncoder;
+import com.yunxi.common.tracer.encoder.HttpServerEncoder;
 import com.yunxi.common.tracer.util.TraceIdGenerator;
 
 /**
@@ -78,7 +79,7 @@ public class HttpTracer extends NetworkTracer<HttpContext> {
                         genLoggingPath(logger.getFileName()), logger.getPattern(),
                         logger.getReserve());
                     tracerWriter.addAppender(clientTracerType, httpClientAppender,
-                        new HttpEncoder());
+                        new HttpClientEncoder());
                 }
             }
         }
@@ -97,7 +98,7 @@ public class HttpTracer extends NetworkTracer<HttpContext> {
                         genLoggingPath(logger.getFileName()), logger.getPattern(),
                         logger.getReserve());
                     tracerWriter.addAppender(serverTracerType, httpServerAppender,
-                        new HttpEncoder());
+                        new HttpServerEncoder());
                 }
             }
         }

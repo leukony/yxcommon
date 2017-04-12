@@ -76,6 +76,7 @@ public class HttpServerFilter implements Filter {
         // 6、获取WEB请求参数并设置到Tracer上下文中
         HttpServletRequest httpReq = request;
         httpContext.setUrl(WebUtils.getRequestURLWithParameters(httpReq));
+        httpContext.setRequestIp(WebUtils.getRequestIP(httpReq));
         httpContext.setRequestSize(httpReq.getContentLength());
         httpContext.setMethod(httpReq.getMethod());
         httpContext.setCurrentApp(appName);

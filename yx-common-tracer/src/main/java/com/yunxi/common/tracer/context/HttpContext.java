@@ -14,6 +14,8 @@ public class HttpContext extends TracerContext<HttpContext> {
     private String url;
     /** 请求的Method, 比如：GET、POST */
     private String method;
+    /** 请求的IP */
+    private String requestIp;
     /** 请求的大小 */
     private long   requestSize;
     /** 响应的大小 */
@@ -38,6 +40,7 @@ public class HttpContext extends TracerContext<HttpContext> {
         HttpContext httpContext = super.cloneTo(new HttpContext());
         httpContext.setUrl(getUrl());
         httpContext.setMethod(getMethod());
+        httpContext.setRequestIp(getRequestIp());
         httpContext.setRequestSize(getRequestSize());
         httpContext.setResponseSize(getResponseSize());
         return httpContext;
@@ -88,6 +91,24 @@ public class HttpContext extends TracerContext<HttpContext> {
       */
     public void setMethod(String method) {
         this.method = method;
+    }
+    
+    /**
+      * Getter method for property <tt>requestIp</tt>.
+      * 
+      * @return property value of requestIp
+      */
+    public String getRequestIp() {
+        return requestIp;
+    }
+    
+    /**
+      * Setter method for property <tt>requestIp</tt>.
+      * 
+      * @param requestIp value to be assigned to property requestIp
+      */
+    public void setRequestIp(String requestIp) {
+        this.requestIp = requestIp;
     }
 
     /**
