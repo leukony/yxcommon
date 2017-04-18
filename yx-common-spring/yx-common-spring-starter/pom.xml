@@ -2,24 +2,19 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
         <groupId>com.yunxi.common</groupId>
-        <artifactId>yx-common</artifactId>
+        <artifactId>yx-common-spring</artifactId>
         <version>2.0.4.hx</version>
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.yunxi.common</groupId>
-	<artifactId>yx-common-tracer</artifactId>
+	<artifactId>yx-common-spring-starter</artifactId>
 	<packaging>jar</packaging>
-	<name>yx-common-tracer</name>
+	<name>yx-common-spring-starter</name>
 
 	<dependencies>
 		<dependency>
 		  	<groupId>com.yunxi.common</groupId>
-		  	<artifactId>yx-common-lang</artifactId>
-		</dependency>
-		
-		<dependency>
-		  	<groupId>org.slf4j</groupId>
-		  	<artifactId>slf4j-log4j12</artifactId>
+		  	<artifactId>yx-common-spring-autoconfigure</artifactId>
 		</dependency>
 	</dependencies>
 </project>
