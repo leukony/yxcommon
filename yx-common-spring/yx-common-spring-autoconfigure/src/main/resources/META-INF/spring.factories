@@ -1,4 +1,4 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.yunxi.common.spring.autoconfigure.http.HttpClientTemplateAutoConfiguration
+com.yunxi.common.spring.autoconfigure.http.HttpClientTemplateAutoConfiguration,\
 com.yunxi.common.spring.autoconfigure.http.HttpServerFilterAutoConfiguration
