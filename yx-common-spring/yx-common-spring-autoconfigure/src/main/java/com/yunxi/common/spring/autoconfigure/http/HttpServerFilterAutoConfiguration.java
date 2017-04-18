@@ -2,7 +2,6 @@ package com.yunxi.common.spring.autoconfigure.http;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +23,6 @@ public class HttpServerFilterAutoConfiguration {
     private HttpServerFilterProperties properties;
     
     @Bean
-    @ConditionalOnMissingBean
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new HttpServerFilter());
