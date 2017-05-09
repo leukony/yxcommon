@@ -160,7 +160,7 @@ public class HttpClientTemplate {
                 if (httpMethod instanceof PostMethod) {
                     ((PostMethod) httpMethod).addParameter("qid", httpContext.getTraceId());
                 } else if (httpMethod instanceof GetMethod) {
-                    String url = httpMethod.getURI().getURI();
+                    String url = httpMethod.getURI().getEscapedURI();
                     if (url.indexOf("?") != -1) {
                         url = url + "&qid=" + httpContext.getTraceId();
                     } else {
