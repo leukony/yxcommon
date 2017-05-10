@@ -32,11 +32,6 @@
                 <artifactId>yx-common-executor</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.yunxi.common</groupId>
-                <artifactId>yx-common-spring</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <!-- ================================================= -->
             <!-- 3rd lib -->
@@ -169,7 +164,6 @@
         <module>yx-common-tracer</module>
         <module>yx-common-rpc</module>
 		<module>yx-common-executor</module>
-		<module>yx-common-spring</module>
     </modules>
     
     <distributionManagement>
