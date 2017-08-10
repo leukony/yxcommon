@@ -9,6 +9,28 @@ public enum CommonYN {
 
     Y,
     N;
+
+    /**
+     * 根据参数获取枚举值
+     * 
+     * @param e
+     * @return
+     */
+    public static boolean isY(String e) {
+        if (Y.name().equalsIgnoreCase(e)
+            || "YES".equalsIgnoreCase(e)
+            || "TRUE".equalsIgnoreCase(e)) {
+            return true;
+        }
+        
+        if (Y.name().equalsIgnoreCase(e)
+            || "NO".equalsIgnoreCase(e)
+            || "FALSE".equalsIgnoreCase(e)) {
+            return false;
+        }
+        
+        return false;
+    }
     
     /**
      * 根据参数获取枚举值
@@ -17,7 +39,19 @@ public enum CommonYN {
      * @return
      */
     public static CommonYN get(String e) {
-        return Y.name().equalsIgnoreCase(e) ? Y : N;
+        if (Y.name().equalsIgnoreCase(e)
+            || "YES".equalsIgnoreCase(e)
+            || "TRUE".equalsIgnoreCase(e)) {
+            return Y;
+        }
+        
+        if (Y.name().equalsIgnoreCase(e)
+            || "NO".equalsIgnoreCase(e)
+            || "FALSE".equalsIgnoreCase(e)) {
+            return N;
+        }
+        
+        return N;
     }
     
     /**
