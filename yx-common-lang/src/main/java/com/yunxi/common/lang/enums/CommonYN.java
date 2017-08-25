@@ -23,7 +23,7 @@ public enum CommonYN {
             return true;
         }
         
-        if (Y.name().equalsIgnoreCase(e)
+        if (N.name().equalsIgnoreCase(e)
             || "NO".equalsIgnoreCase(e)
             || "FALSE".equalsIgnoreCase(e)) {
             return false;
@@ -45,7 +45,7 @@ public enum CommonYN {
             return Y;
         }
         
-        if (Y.name().equalsIgnoreCase(e)
+        if (N.name().equalsIgnoreCase(e)
             || "NO".equalsIgnoreCase(e)
             || "FALSE".equalsIgnoreCase(e)) {
             return N;
