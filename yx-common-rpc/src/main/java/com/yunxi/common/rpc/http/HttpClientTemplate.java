@@ -157,6 +157,9 @@ public class HttpClientTemplate {
 
             // 3、将上下文中Tracer参数设置到请求头
             if (httpContext != null) {
+                httpMethod.setRequestHeader("X-Open-Qid", httpContext.getTraceId());
+                httpMethod.setRequestHeader("X-Open-Rpcid", httpContext.getRpcId());
+                
                 if (httpMethod instanceof PostMethod) {
                     ((PostMethod) httpMethod).addParameter("qid", httpContext.getTraceId());
                 } else if (httpMethod instanceof GetMethod) {
@@ -181,6 +184,7 @@ public class HttpClientTemplate {
                     }
                 }
             }
+            
             // 4、开始Http请求,调用executeMethod
             int httpCode = httpClient.executeMethod(httpMethod);
 

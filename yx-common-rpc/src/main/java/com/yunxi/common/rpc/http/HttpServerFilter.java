@@ -52,13 +52,21 @@ public class HttpServerFilter implements Filter {
         }
 
         // 2、获取WEB请求中的Tracer参数
-        String traceId = request.getParameter("qid");
+        String traceId = request.getHeader("X-Open-Qid");
+        String rpcId = request.getHeader("X-Open-Rpcid");
+        if (traceId == null || traceId.length() < 0) {
+            traceId = request.getParameter("qid");
+        }
 
         Map<String, String> tracerContext = null;
         if (traceId != null && traceId.length() > 0) {
             tracerContext = new HashMap<String, String>();
             tracerContext.put(TracerConstants.TRACE_ID, traceId);
-            tracerContext.put(TracerConstants.RPC_ID, TracerConstants.RPC_ID_ROOT);
+            if (rpcId != null && rpcId.length() > 0) {
+                tracerContext.put(TracerConstants.RPC_ID, rpcId);
+            } else {
+                tracerContext.put(TracerConstants.RPC_ID, TracerConstants.RPC_ID_ROOT);
+            }
         }
 
         // 3、从工厂中获取HttpTracer
