@@ -211,7 +211,7 @@ public class WebUtils {
 
         return null;
     }
-    
+
     /**
      * 获取请求来源IP
      * @param request
@@ -243,16 +243,13 @@ public class WebUtils {
             // 注意:当访问地址为 localhost 时 地址格式为 0:0:0:0:0:0:1
             String[] ips = ip.split(",");
             for (int i = 0; i < ips.length; i++) {
-                if (ips[i] == null) {
-                    continue;
+                if (ips[i] != null && !"unknown".equalsIgnoreCase(ips[i])) {
+                    ip = ips[i];
+                    break;
                 }
-                if ("unknown".equalsIgnoreCase(ips[i])) {
-                    continue;
-                }
-                ip = ips[i];
             }
         }
-        
+
         if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:1".equals(ip)) {
             try {
                 ip = InetAddress.getLocalHost().getHostAddress();
