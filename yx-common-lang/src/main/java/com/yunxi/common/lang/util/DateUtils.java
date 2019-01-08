@@ -165,7 +165,7 @@ public class DateUtils {
     }
 
     /**
-     * 计算两个日志相差天数
+     * 计算两个日期相差天数
      * @param first
      * @param last
      */
@@ -176,7 +176,7 @@ public class DateUtils {
     }
 
     /**
-     * 计算两个日志相差月数
+     * 计算两个日期相差月数
      * @param first
      * @param last
      */
@@ -192,7 +192,7 @@ public class DateUtils {
     }
 
     /**
-     * 计算两个日志相差年数
+     * 计算两个日期相差年数
      * @param first
      * @param last
      */
