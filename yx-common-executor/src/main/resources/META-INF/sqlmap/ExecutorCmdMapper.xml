@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="ExecutorCmd">
+	<resultMap id="BaseResultMap" class="com.yunxi.common.executor.database.ExecutorCmdDO">
+	    <result column="ID" 				property="id" 					jdbcType="DECIMAL"/>
+     	<result column="CMD_NO" 			property="cmdNo" 				jdbcType="VARCHAR"/>
+	    <result column="CMD_TYPE" 			property="cmdType" 			    jdbcType="VARCHAR"/>
+	    <result column="CMD_TRACE"  		property="cmdTrace" 			jdbcType="VARCHAR"/>
+		<result column="STATUS"				property="status" 				jdbcType="VARCHAR"/>
+		<result column="EXECUTE_TIMES" 		property="executeTimes" 		jdbcType="DECIMAL"/>
+		<result column="NEXT_EXECUTE_TIME"	property="nextExecuteTime"   	jdbcType="TIMESTAMP"/>
+		<result column="CONTEXT" 			property="context" 				jdbcType="VARCHAR"/>
+		<result column="HOSTNAME" 			property="hostname" 			jdbcType="VARCHAR"/>
+		<result column="GMT_CREATE" 		property="gmtCreate" 			jdbcType="TIMESTAMP"/>
+		<result column="GMT_MODIFIED"	 	property="gmtModify" 			jdbcType="TIMESTAMP"/>
+  	</resultMap>
+  	
+	<sql id="Base_Column_List">
+	  	ID, CMD_NO, CMD_TYPE, CMD_TRACE, STATUS, EXECUTE_TIMES, NEXT_EXECUTE_TIME, CONTEXT, HOSTNAME, GMT_CREATE, GMT_MODIFIED
+	</sql>
+	
+	<insert id="insert" parameterClass="com.yunxi.common.executor.database.ExecutorCmdDO">	
+		INSERT INT ${tableNamePrefix}EXECUTOR_CMD (
+			CMD_NO,
+			CMD_TYPE, 
+			CMD_TRACE, 
+			STATUS, 
+			EXECUTE_TIMES, 
+			NEXT_EXECUTE_TIME, 
+			CONTEXT,
+			HOSTNAME,
+			GMT_CREATE,
+			GMT_MODIFIED
+		) VALUES (
+			#{cmdNo},
+			#{cmdType}, 
+			#{cmdTrace},
+			#{status}, 
+			0, 
+			<isNull property="nextExecuteTime">
+			now(),
+			</isNull>
+			<isNotNull property="nextExecuteTime">
+			#{nextExecuteTime},
+			</isNotNull>
+			#{context},
+			#{hostname},
+			now(),
+			now()
+		)
+	</insert>
+
+	<update id="update" parameterClass="com.yunxi.common.executor.database.ExecutorCmdDO">
+		UPDATE 
+			${tableNamePrefix}EXECUTOR_CMD
+		SET 
+		  	<isNotNull property="status">
+		  	STATUS = #{status},
+		  	</isNotNull>
+		  	<isNotNull property="context">
+		  	CONTEXT = #{context},
+		  	</isNotNull>
+		  	<isNotNull property="nextExecuteTime">
+		   	NEXT_EXECUTE_TIME = #{nextExecuteTime},
+		  	</isNotNull>
+		 	GMT_MODIFIED = now()
+		WHERE ID = #{id}
+	</update>
+    
+    <select id="selectById" parameterClass="long" resultMap="BaseResultMap">
+        SELECT
+            <include refid="ExecutorCmd.Base_Column_List"/>
+        FROM
+			${tableNamePrefix}EXECUTOR_CMD
+        WHERE
+            ID = #{id}
+    </select>
+    
+    <delete id="deleteById" parameterClass="long">
+        DELETE FROM ${tableNamePrefix}EXECUTOR_CMD WHERE ID = #{id}
+    </delete>
+</sqlMap>
