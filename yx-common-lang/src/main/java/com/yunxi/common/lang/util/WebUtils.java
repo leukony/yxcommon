@@ -240,7 +240,7 @@ public class WebUtils {
             // 取X-Forwarded-For中第一个非unknown的有效IP字符串
             // 如：X-Forwarded-For：192.168.1.110, 192.168.1.120, 192.168.1.130, 192.168.1.100
             // 用户真实IP为： 192.168.1.110 
-            // 注意:当访问地址为 localhost 时 地址格式为 0:0:0:0:0:0:1
+            // 注意:当访问地址为 localhost 时 地址格式为 0:0:0:0:0:0:0:1
             String[] ips = ip.split(",");
             for (int i = 0; i < ips.length; i++) {
                 if (ips[i] != null && !"unknown".equalsIgnoreCase(ips[i])) {
@@ -250,7 +250,7 @@ public class WebUtils {
             }
         }
 
-        if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:1".equals(ip)) {
+        if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
             try {
                 ip = InetAddress.getLocalHost().getHostAddress();
             } catch (UnknownHostException e) {
