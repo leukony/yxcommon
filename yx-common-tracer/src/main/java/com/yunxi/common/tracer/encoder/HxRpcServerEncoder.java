@@ -47,6 +47,7 @@ public class HxRpcServerEncoder implements TracerEncoder<RpcContext> {
           .appendRaw(PREFIX_z).appendRaw(TracerType.getTracerType(ctx.getTracerType()).name()).appendRaw(SUFFIX_z).appendRaw(SPACE)
           .appendRaw(PREFIX_z)
           .appendRaw(PREFIX_k)
+          .appendRaw("\"span_id\":\"" + ctx.getRpcId() + "\",")
           .appendRaw("\"serviceName\":\"" + ctx.getServiceName() + "\",")
           .appendRaw("\"methodName\":\"" + ctx.getMethodName() + "\",")
           .appendRaw("\"protocol\":\"" + ctx.getProtocol() + "\",")

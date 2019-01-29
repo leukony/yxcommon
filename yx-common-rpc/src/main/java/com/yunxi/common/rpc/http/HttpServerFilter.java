@@ -52,8 +52,8 @@ public class HttpServerFilter implements Filter {
         }
 
         // 2、获取WEB请求中的Tracer参数
-        String traceId = request.getHeader("X-Open-Qid");
-        String rpcId = request.getHeader("X-Open-Rpcid");
+        String traceId = request.getHeader("X-B3-TraceId");
+        String rpcId = request.getHeader("X-B3-SpanId");
         if (traceId == null || traceId.length() < 0) {
             traceId = request.getParameter("qid");
         }

@@ -34,6 +34,54 @@ public class TracerUtils {
     }
     
     /**
+     * 从上下文中获取RpcId
+     * @return
+     */
+    public static String getRpcId() {
+        TracerContext<?> context = TracerLocal.get();
+        
+        if (context == null) {
+            return EMPTY;
+        }
+        
+        String rpcId = context.getRpcId();
+        
+        return rpcId == null ? EMPTY : rpcId;
+    }
+    
+    /**
+     * 从上下文中获取上一个RpcId
+     * @return
+     */
+    public static String getLastRpcId() {
+        TracerContext<?> context = TracerLocal.get();
+        
+        if (context == null) {
+            return EMPTY;
+        }
+        
+        String lastRpcId = context.lastChildRpcId();
+        
+        return lastRpcId == null ? EMPTY : lastRpcId;
+    }
+    
+    /**
+     * 从上下文中获取下一个RpcId
+     * @return
+     */
+    public static String getNextRpcId() {
+        TracerContext<?> context = TracerLocal.get();
+        
+        if (context == null) {
+            return EMPTY;
+        }
+        
+        String nextRpcId = context.nextChildRpcId();
+        
+        return nextRpcId == null ? EMPTY : nextRpcId;
+    }
+    
+    /**
      * 计算匹配字符出现次数
      * @param str
      * @param c
